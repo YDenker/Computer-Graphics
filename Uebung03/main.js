@@ -19,11 +19,16 @@ gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); //Setzen des Tiefenbits
 gl.colorMask(true,true,true,true); //Puffer vor Schreiben maskieren
 gl.depthMask(true);
 
-
 var vertexData = [
-    0,1,0,
-    1,-1,0,
-    -1,-1,0
+    0,0.8,0,
+    0.6,0,0,
+    -0.6,0,0,
+    0.5,0,0,
+    -0.5,0,0,
+    -0.5,-1,0,
+    -0.5,-1,0,
+    0.5,0,0,
+    0.5,-1,0,
 ];
 
 var buffer = gl.createBuffer(); // Buffer ertellen
@@ -58,7 +63,7 @@ var posAttribLocation = gl.getAttribLocation(program, `position`);
 gl.enableVertexAttribArray(posAttribLocation);
 gl.vertexAttribPointer(posAttribLocation, 3, gl.FLOAT, false, 0,0);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.drawArrays(gl.TRIANGLES, 0, 9);
 
 gl.disableVertexAttribArray(posAttribLocation);
 gl.deleteBuffer(buffer);

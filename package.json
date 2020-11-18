@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/YDenker/Computer-Graphics/issues"
   },
-  "homepage": "https://github.com/YDenker/Computer-Graphics#readme"
+  "homepage": "https://github.com/YDenker/Computer-Graphics#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

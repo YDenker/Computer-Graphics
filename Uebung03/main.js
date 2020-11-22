@@ -1,4 +1,4 @@
-var canvas = document.getElementById('canvas');
+var canvas = document.getElementById('canvas1');
 var gl = canvas.getContext('webgl');
 
 if(!gl){
@@ -31,39 +31,71 @@ var vertexData = [
     0.5,-1,0,
 ];
 
-var buffer = gl.createBuffer(); // Buffer ertellen
-gl.bindBuffer(gl.ARRAY_BUFFER,buffer); // vertexdata in Buffer laden
+var colorData = [
+    1,0,0,
+    1,0,0,
+    1,0,0,
+    1,1,0,
+    1,1,0,
+    1,1,0,
+    1,1,0,
+    1,1,0,
+    1,1,0,
+];
+
+var positionBuffer = gl.createBuffer(); // Buffer ertellen
+gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer); // vertexdata in Buffer laden
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
+
+var colorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
 
 var vertexShader = gl.createShader(gl.VERTEX_SHADER); // Vertex shader erzeugen
 gl.shaderSource(vertexShader,`
+precision mediump float;
 attribute vec3 position;
+attribute vec3 color;
+varying vec3 vColor;
 void main() {
+    vColor = color;
     gl_Position = vec4(position, 1);
 }
 `);
 gl.compileShader(vertexShader);
+console.log(gl.getShaderInfoLog(vertexShader));
 
 var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER); // Fragment shader erzeugen
 gl.shaderSource(fragmentShader, `
-void main(){
-    gl_FragColor = vec4(1,0,0,1);
+precision mediump float;
+varying vec3 vColor;
+void main() {
+    gl_FragColor = vec4(vColor, 1);
 }
 `);
 gl.compileShader(fragmentShader);
+console.log(gl.getShaderInfoLog(fragmentShader));
 
 var program = gl.createProgram();
 gl.attachShader(program, vertexShader);
 gl.attachShader(program, fragmentShader);
 gl.linkProgram(program);
 
-gl.useProgram(program);
-
 var posAttribLocation = gl.getAttribLocation(program, `position`);
 gl.enableVertexAttribArray(posAttribLocation);
+gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
 gl.vertexAttribPointer(posAttribLocation, 3, gl.FLOAT, false, 0,0);
 
+var colorAttribLocation = gl.getAttribLocation(program, `color`);
+gl.enableVertexAttribArray(colorAttribLocation);
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.vertexAttribPointer(colorAttribLocation, 3, gl.FLOAT, false, 0,0);
+
+gl.useProgram(program);
 gl.drawArrays(gl.TRIANGLES, 0, 9);
 
 gl.disableVertexAttribArray(posAttribLocation);
-gl.deleteBuffer(buffer);
+gl.deleteBuffer(positionBuffer);
+
+gl.disableVertexAttribArray(colorAttribLocation);
+gl.deleteBuffer(colorBuffer);

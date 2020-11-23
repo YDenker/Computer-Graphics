@@ -43,6 +43,11 @@ var colorData = [
     1,1,0,
 ];
 
+var matrix = new mat4();
+matrix.setRotate([0.3,0.2,0.4]);
+matrix.setTranslate([2,2,2]);
+console.log(matrix);
+
 var positionBuffer = gl.createBuffer(); // Buffer ertellen
 gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer); // vertexdata in Buffer laden
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);

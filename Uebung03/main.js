@@ -5,19 +5,7 @@ if(!gl){
     throw new Error('WebGL not supported');
 }
 
-gl.depthFunc(gl.LEQUAL); //Tiefentest einschalten
-gl.enable(gl.DEPTH_TEST);
 
-gl.clearColor(0.3,0.9,0.3,1.0); //Color Buffer: Farb- und Alphawerte (RGBA)
-
-gl.clearDepth(1.0); //Depth Buffer: speichert Tiefe z für Pixel
-
-gl.viewport(0,0,canvas.clientWidth, canvas.clientHeight);
-
-gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); //Setzen des Tiefenbits
-
-gl.colorMask(true,true,true,true); //Puffer vor Schreiben maskieren
-gl.depthMask(true);
 
 var vertexData = [
     0,0.8,0,
@@ -29,6 +17,12 @@ var vertexData = [
     -0.5,-1,0,
     0.5,0,0,
     0.5,-1,0,
+    0,0.8,0,
+    0.6,0,0,
+    -0.6,0,0,
+    0,0.8,0,
+    0.6,0,0,
+    -0.6,0,0,
 ];
 
 var colorData = [
@@ -41,12 +35,13 @@ var colorData = [
     1,1,0,
     1,1,0,
     1,1,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0.2,0.2,0.2,
+    0.2,0.2,0.2,
+    0.2,0.2,0.2,
 ];
-
-var matrix = new mat4();
-matrix.setRotate([0.3,0.2,0.4]);
-matrix.setTranslate([2,2,2]);
-console.log(matrix);
 
 var positionBuffer = gl.createBuffer(); // Buffer ertellen
 gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer); // vertexdata in Buffer laden
@@ -62,9 +57,10 @@ precision mediump float;
 attribute vec3 position;
 attribute vec3 color;
 varying vec3 vColor;
+uniform mat4 matrix;
 void main() {
     vColor = color;
-    gl_Position = vec4(position, 1);
+    gl_Position = matrix * vec4(position, 1);
 }
 `);
 gl.compileShader(vertexShader);
@@ -97,10 +93,65 @@ gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 gl.vertexAttribPointer(colorAttribLocation, 3, gl.FLOAT, false, 0,0);
 
 gl.useProgram(program);
-gl.drawArrays(gl.TRIANGLES, 0, 9);
 
-gl.disableVertexAttribArray(posAttribLocation);
-gl.deleteBuffer(positionBuffer);
+var uniformLocations = {
+    matrix: gl.getUniformLocation(program, `matrix`),
+};
 
-gl.disableVertexAttribArray(colorAttribLocation);
-gl.deleteBuffer(colorBuffer);
+var matrix = new mat4();
+matrix.setScale(1);
+matrix.setRotate([0,0,0]);
+matrix.setTranslate([0,0,0]);
+console.log(matrix);
+
+var secondsMatrix = new mat4();
+
+var minutesMatrix = new mat4();
+
+function UpdateClockMatrices(){
+    var timeSecRad = new Date().getSeconds()* Math.PI / 30;
+    secondsMatrix.setIdentity();
+    secondsMatrix.setScaleX(.05);
+    secondsMatrix.setScaleY(1.5);
+    secondsMatrix.setScaleZ(1);
+    secondsMatrix.setRotateZ(timeSecRad);
+    secondsMatrix.setTranslate([0,-.5,0]);
+
+    var timeMinRad = new Date().getMinutes()* Math.PI / 30;
+    minutesMatrix.setIdentity();
+    minutesMatrix.setScaleX(.1);
+    minutesMatrix.setScaleY(1.2);
+    minutesMatrix.setScaleZ(1);
+    minutesMatrix.setRotateZ(timeMinRad);
+    minutesMatrix.setTranslate([0,-.5,0]);
+}
+
+function initCanvas(){
+    gl.depthFunc(gl.LEQUAL); //Tiefentest einschalten
+    gl.enable(gl.DEPTH_TEST);
+
+    gl.clearColor(0.3,0.9,0.3,1.0); //Color Buffer: Farb- und Alphawerte (RGBA)
+    gl.clearDepth(1.0); //Depth Buffer: speichert Tiefe z für Pixel
+
+    gl.viewport(0,0,canvas.clientWidth, canvas.clientHeight);
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); //Setzen des Tiefenbits
+
+    gl.colorMask(true,true,true,true); //Puffer vor Schreiben maskieren
+    gl.depthMask(true);
+}
+
+function drawTriangles(start,finish, matrix){
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix.toFloat32Array());
+    gl.drawArrays(gl.TRIANGLES, start, finish);
+}
+
+function animate(){
+    initCanvas();
+    UpdateClockMatrices();
+    drawTriangles(0,9,matrix);
+    drawTriangles(12,3,minutesMatrix);
+    drawTriangles(9,3,secondsMatrix);
+    requestAnimationFrame(animate);
+}
+animate();

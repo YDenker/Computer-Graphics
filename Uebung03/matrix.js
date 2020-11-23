@@ -96,9 +96,27 @@ class mat4 {
      * @param {float} scaleFactor scale
      */
     setScale(scaleFactor){
-        this.matArray[0][0] *= scaleFactor;
-        this.matArray[1][1] *= scaleFactor;
-        this.matArray[2][2] *= scaleFactor;
+        this.setScaleX(scaleFactor);
+        this.setScaleY(scaleFactor);
+        this.setScaleZ(scaleFactor);
+    }
+    /** Set the scale factor for the x axis of the matrix
+     * @param {float} scaleFactor scale
+     */
+    setScaleX(scaleFactor){
+        this.matArray[0][0] = scaleFactor;
+    }
+    /** Set the scale factor for the y axis of the matrix
+     * @param {float} scaleFactor scale
+     */
+    setScaleY(scaleFactor){
+        this.matArray[1][1] = scaleFactor;
+    }
+    /** Set the scale factor for the z axis of the matrix
+     * @param {float} scaleFactor scale
+     */
+    setScaleZ(scaleFactor){
+        this.matArray[2][2] = scaleFactor;
     }
     /** Set the translation of the matrix.
      * @param {Float32Array} transVector A translation vector that is to be applied to the matrix.
@@ -125,7 +143,7 @@ class mat4 {
         this.setRotateZ(zrad);
     }
     /** Set the rotation about the X axis of the matrix.
-     * @param {Float32Array} radiant The rotation amount in radiant. 
+     * @param {float} radiant The rotation amount in radiant. 
      */
     setRotateX(radiant){
         let cosine = Math.cos(radiant);
@@ -141,7 +159,7 @@ class mat4 {
         this.matArray[3][2] = clone[3][2] * cosine - clone[3][1] * sine;
     }
     /** Set the rotation about the Y axis of the matrix.
-     * @param {Float32Array} radiant The rotation amount in radiant. 
+     * @param {float} radiant The rotation amount in radiant. 
      */
     setRotateY(radiant){
         let cosine = Math.cos(radiant);
@@ -157,7 +175,7 @@ class mat4 {
         this.matArray[3][2] = clone[3][0] * sine + clone[3][2] * cosine;
     }
     /** Set the rotation about the Z axis of the matrix.
-     * @param {Float32Array} radiant The rotation amount in radiant. 
+     * @param {float} radiant The rotation amount in radiant. 
      */
     setRotateZ(radiant){
         let cosine = Math.cos(radiant);
@@ -171,5 +189,17 @@ class mat4 {
         this.matArray[1][1] = clone[1][1] * cosine - clone[1][0] * sine;
         this.matArray[2][1] = clone[2][1] * cosine - clone[2][0] * sine;
         this.matArray[3][1] = clone[3][1] * cosine - clone[3][0] * sine;
+    }
+    /** Convert the matrix to a Float32Array.
+     * @param {Float32Array}
+     */
+    toFloat32Array(){
+        var out = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        for(var columns = 0; columns < 4; columns ++){
+            for(var rows = 0; rows < 4; rows ++){
+                out[4*columns+rows] = this.matArray[columns][rows];
+            }
+        }
+        return out;
     }
 }

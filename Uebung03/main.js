@@ -111,16 +111,16 @@ var minutesMatrix = new mat4();
 function UpdateClockMatrices(){
     var timeSecRad = new Date().getSeconds()* Math.PI / 30;
     secondsMatrix.setIdentity();
-    secondsMatrix.setScaleX(.05);
-    secondsMatrix.setScaleY(1.5);
+    secondsMatrix.setScaleX(.02);
+    secondsMatrix.setScaleY(.6);
     secondsMatrix.setScaleZ(1);
     secondsMatrix.setRotateZ(timeSecRad);
     secondsMatrix.setTranslate([0,-.5,0]);
 
     var timeMinRad = new Date().getMinutes()* Math.PI / 30;
     minutesMatrix.setIdentity();
-    minutesMatrix.setScaleX(.1);
-    minutesMatrix.setScaleY(1.2);
+    minutesMatrix.setScaleX(.05);
+    minutesMatrix.setScaleY(.5);
     minutesMatrix.setScaleZ(1);
     minutesMatrix.setRotateZ(timeMinRad);
     minutesMatrix.setTranslate([0,-.5,0]);

@@ -21,7 +21,9 @@ function loadLibraryScripts(){
     scriptLoader('../Libraries/attributePointer.js');
     scriptLoader('../Libraries/matrix.js');
     scriptLoader('../Libraries/rgbColor.js');
+    scriptLoader('../Libraries/entity.js');
     scriptLoader('../Libraries/triangle.js');
+    scriptLoader('../Libraries/quad.js');
     scriptLoader('../Libraries/entities.js');
     scriptLoader('../Libraries/templates.js');
     scriptLoader('main.js'); // always do this at the bottom!

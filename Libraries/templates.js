@@ -4,17 +4,15 @@ function house(){ // static
     roof.setVertices([0,0.8,0,
                       0.6,0,0,
                       -0.6,0,0,]);
-    roof.setSingleColorRGB(rgbColor.red());
-    var wall1 = new tri(entitiesholder);
-    wall1.setVertices([0.5,0,0,
-                       -0.5,0,0,
-                       -0.5,-1,0,]);
-    wall1.setSingleColorRGB(rgbColor.yellow());
-    var wall1 = new tri(entitiesholder);
-    wall1.setVertices([-0.5,-1,0,
+    roof.setColorRGB(rgbColor.red());
+    var wall = new quad(entitiesholder);
+    wall.setVertices([0.5,0,0,
+                      -0.5,0,0,
+                      -0.5,-1,0,
+                      -0.5,-1,0,
                        0.5,0,0,
-                       0.5,-1,0,]);
-    wall1.setSingleColorRGB(rgbColor.yellow());
+                       0.5,-1,0,])
+    wall.setColorRGB(rgbColor.yellow());
 }
 
 function minuteHand(){ //dynamic
@@ -23,7 +21,7 @@ function minuteHand(){ //dynamic
     minuteHand.setVertices([0,0.8,0,
                       0.6,0,0,
                      -0.6,0,0,]);
-    minuteHand.setSingleColorRGB(rgbColor.black());
+    minuteHand.setColorRGB(rgbColor.black());
     return minuteHand;
 }
 
@@ -33,6 +31,6 @@ function secondsHand(){ //dynamic
     secondsHand.setVertices([0,0.8,0,
                             0.6,0,0,
                             -0.6,0,0,]);
-    secondsHand.setSingleColorRGB(rgbColor.grey());
+    secondsHand.setColorRGB(rgbColor.grey());
     return secondsHand;
 }

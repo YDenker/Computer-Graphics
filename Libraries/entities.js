@@ -1,31 +1,36 @@
 class entityholder{
-    triangles;
+    entities;
+    headindex;
     constructor(){
-        this.triangles = [];
+        this.entities = [];
+        this.headindex = 0;
     }
-    /** Adds a triangle to the triangles array and returns its index */
-    addTri(triangle){
-        return this.triangles.push(triangle)-1;
+    /** Adds an entity to the entities array and returns its index */
+    addEntity(entity){
+        let temp = this.headindex;
+        this.entities.push(entity)
+        this.headindex += entity.vertexAmount;
+        return temp;
     }
-    /** returns the vertexdata of every triangle in the triangle array */
+    /** returns the vertexdata of every entity in the entities array */
     vertexData(){
         var vertexData = [];
-        this.triangles.forEach(element => {
-            vertexData = vertexData.concat(element.vertices);
+        this.entities.forEach(element => {
+            vertexData = vertexData.concat(element.getVertices());
         });
         return vertexData;
     }
-    /** returns the colordata of every triangle in the triangle array */
+    /** returns the colordata of every entity in the entities array */
     colorData(){
         var colorData = [];
-        this.triangles.forEach(element => {
-            colorData = colorData.concat(element.color);
+        this.entities.forEach(element => {
+            colorData = colorData.concat(element.getColor());
         });
         return colorData;
     }
-    /** Calls the draw function of every triangle in the triangles array. */
+    /** Calls the draw function of every entity in the entities array. */
     draw(webglContent,matrixUniformLocation){
-        this.triangles.forEach(element => {
+        this.entities.forEach(element => {
             element.draw(webglContent,matrixUniformLocation);
         });
     }

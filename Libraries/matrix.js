@@ -4,7 +4,7 @@ class mat4 {
      * Creates a 4x4 identity matrix
      */
     constructor(){
-        this.matArray = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]; // COLUMN MAJOR!
+        this.setIdentity(); // COLUMN MAJOR!
     }
 
     /**
@@ -91,6 +91,30 @@ class mat4 {
     /** Set the matrix to its identity matrix */
     setIdentity(){
         this.matArray = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+    }
+    /** Convert to a perspective projection matrix with the given bounds.
+     * @param {number} fieldOfView Vertical field of view in radians
+     * @param {number} aspectRatio Aspect ratio. typically viewport width/height
+     * @param {number} near Near bound of the frustrum. Do not use 0!
+     * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
+    */
+    setPerspectiveProjection(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
+        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(near-far);
+        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(far+near)*nf,-1],[0,0,2*far*near*nf,0]];
+    }
+    /** Convert to a orthographic projection matrix with the given bounds.
+     * @param {number} left Left bound of the frustum
+     * @param {number} right Right bound of the frustum
+     * @param {number} bottom Bottom bound of the frustum
+     * @param {number} top Top bound of the frustum
+     * @param {number} near Near bound of the frustum
+     * @param {number} far Near bound of the frustum
+     */
+    setOrthographicProjection(left,right,bottom,top,near,far){
+        let lr = 1/(left-right);
+        let bt = 1/(bottom-top);
+        let nf = 1/(near-far);
+        this.matArray = [[-2*lr,0,0,0],[0,-2*bt,0,0],[0,0,-2*nf,0],[(left+right)*lr,(top+bottom)*bt,(far+near)*nf,1]];
     }
     /** Set the scale factor of the matrix
      * @param {float} scaleFactor scale

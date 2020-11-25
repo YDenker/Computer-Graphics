@@ -4,9 +4,16 @@ class Entity{
     transform;
     entityIndex;
     vertexAmount;
+    
+    Update(){ /** This is designed after the concept the unity game engine uses. This function is supposed to be overriden.*/        
+    }
     /** draws the entity in the given context */
-    draw(webglContext,matrixUniformLocation){
-        webglContext.uniformMatrix4fv(matrixUniformLocation,false,this.transform.toFloat32Array());
+    draw(webglContext,matrixUniformLocation, camera){
+        // viewpoint of camera
+        let modelview = camera.transform.multiplyMat4(this.transform);
+        // projection matrix
+        let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
+        webglContext.uniformMatrix4fv(matrixUniformLocation,false,modelviewProjection.toFloat32Array());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){

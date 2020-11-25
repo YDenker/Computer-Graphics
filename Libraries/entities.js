@@ -1,6 +1,7 @@
 class entityholder{
     entities;
     headindex;
+    mainCamera;
     constructor(){
         this.entities = [];
         this.headindex = 0;
@@ -31,7 +32,7 @@ class entityholder{
     /** Calls the draw function of every entity in the entities array. */
     draw(webglContent,matrixUniformLocation){
         this.entities.forEach(element => {
-            element.draw(webglContent,matrixUniformLocation);
+            element.draw(webglContent,matrixUniformLocation, this.mainCamera);
         });
     }
 }

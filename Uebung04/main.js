@@ -5,6 +5,10 @@ if(!gl){
     throw new Error('WebGL not supported');
 }
 var entities = e.getInstance();
+//creating a camera
+var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
+
+CameraMovement(mainCamera);
 
 //drawing from the templates.js
 house();
@@ -51,6 +55,21 @@ function initCanvas(){
     gl.colorMask(true,true,true,true); //Puffer vor Schreiben maskieren
     gl.depthMask(true);
 }
+
+function CameraMovement(camera){
+    canvas.setAttribute("tabindex","0");
+    canvas.addEventListener('keypress', function(evt){
+        switch (evt.charCode){
+            case 43:
+                console.log("zoom in");
+                break;
+            case 45:
+                console.log("zoom out");
+                break;
+        }
+    }, true);
+}
+
 console.log(entities);
 
 function animationLoop(){
@@ -89,6 +108,3 @@ function UpdateClockMatrices(){
     minutesMatrix.setTranslate([0,-.5,0]);
     minutes.setTransform(minutesMatrix);
 }
-
-
-

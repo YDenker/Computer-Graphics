@@ -3,8 +3,8 @@ class mat4 {
     /**
      * Creates a 4x4 identity matrix
      */
-    constructor(){
-        this.setIdentity(); // COLUMN MAJOR!
+    constructor(matArray = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]){
+        this.matArray = matArray; // COLUMN MAJOR!
     }
 
     /**
@@ -79,10 +79,10 @@ class mat4 {
         let temp = rightMatrix.matArray;
         for (var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
-                out[column][row] = this.matArray[column][0] * temp[0][row] +
-                                   this.matArray[column][1] * temp[1][row] +
-                                   this.matArray[column][2] * temp[2][row] +
-                                   this.matArray[column][3] * temp[3][row];
+                out.matArray[column][row] = this.matArray[column][0] * temp[0][row] +
+                                            this.matArray[column][1] * temp[1][row] +
+                                            this.matArray[column][2] * temp[2][row] +
+                                            this.matArray[column][3] * temp[3][row];
             }
         }
         return out;
@@ -99,8 +99,8 @@ class mat4 {
      * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
     */
     setPerspectiveProjection(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
-        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(near-far);
-        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(far+near)*nf,-1],[0,0,2*far*near*nf,0]];
+        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(nearClipping-farClipping);
+        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(farClipping+nearClipping)*nf,-1],[0,0,2*farClipping*nearClipping*nf,0]];
     }
     /** Convert to a orthographic projection matrix with the given bounds.
      * @param {number} left Left bound of the frustum
@@ -225,5 +225,15 @@ class mat4 {
             }
         }
         return out;
+    }
+    /** Generate a perspective projection matrix with the given bounds.
+     * @param {number} fieldOfView Vertical field of view in radians
+     * @param {number} aspectRatio Aspect ratio. typically viewport width/height
+     * @param {number} near Near bound of the frustrum. Do not use 0!
+     * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
+    */
+    static perspective(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
+        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(nearClipping-farClipping);
+        return [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(farClipping+nearClipping)*nf,-1],[0,0,2*farClipping*nearClipping*nf,0]];
     }
 }

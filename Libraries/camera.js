@@ -13,8 +13,8 @@ class camera{
         this.mainCam = mainCam;
         this.projectionType = projectionType;
         this.transform = new mat4();
-        this.transform.setTranslate([0,0,-4]);
-        this.fieldOfView = 75*Math.PI/180;
+        this.transform.setTranslate([0,0,-2]);
+        this.fieldOfView = 70*Math.PI/180;
         this.aspects = [widthAspect,heighAspect];
         this.clipping = [1e-4,1e4];
         this.projectionMatrix = new mat4();
@@ -28,6 +28,7 @@ class camera{
     updateProjectionMatrix(){
         if(this.projectionType == 0) this.projectionMatrix.setPerspectiveProjection(this.fieldOfView,this.aspects[0]/this.aspects[1],this.clipping[0],this.clipping[1]);
         else this.projectionMatrix.setOrthographicProjection(this.aspects[0]/2,this.aspects[0]/2,this.aspects[1]/2,this.aspects[1]/2,this.clipping[0],this.clipping[1]);
+        debug.logOnce(this.projectionMatrix, "Projetion matrix");
     }
     /** Sets a new field of view for the camera
      * @param {number} fov field of view in either degree or radian

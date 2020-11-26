@@ -11,7 +11,7 @@ function house(){ // static
                       -0.5,-1,0,
                       -0.5,-1,0,
                        0.5,0,0,
-                       0.5,-1,0,])
+                       0.5,-1,0,]);
     wall.setColorRGB(rgbColor.yellow());
 }
 

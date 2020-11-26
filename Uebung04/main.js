@@ -57,7 +57,7 @@ function initCanvas(){
 }
 
 function CameraMovement(camera){
-    canvas.setAttribute("tabindex","0");
+canvas.setAttribute("tabindex","0");
     canvas.addEventListener('keypress', function(evt){
         switch (evt.charCode){
             case 43:
@@ -70,7 +70,7 @@ function CameraMovement(camera){
     }, true);
 }
 
-console.log(entities);
+debug.log(entities,"Entities");
 
 function animationLoop(){
     initCanvas();

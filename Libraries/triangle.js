@@ -1,15 +1,11 @@
 class tri extends Entity{
+    
     constructor(entitiesHolder){
         super();
         this.vertices = [0, 1,0,
                          1,-1,0,
-                         -1,-1,0,];
-        this.color = [1,1,1,
-                      1,1,1,
-                      1,1,1,];
-        this.transform = new mat4();
-        this.vertexAmount = 3;
-        this.entityIndex = entitiesHolder.addEntity(this);
+                        -1,-1,0,];
+            this.init(entitiesHolder);
     } 
     setMultiColor(colors){
         this.color = colors;

@@ -22,6 +22,7 @@ function loadLibraryScripts(){
     scriptLoader('../Libraries/attributePointer.js');
     scriptLoader('../Libraries/matrix.js');
     scriptLoader('../Libraries/rgbColor.js');
+    scriptLoader('../Libraries/transformation.js');
     scriptLoader('../Libraries/camera.js');
     scriptLoader('../Libraries/entity.js');
     scriptLoader('../Libraries/triangle.js');

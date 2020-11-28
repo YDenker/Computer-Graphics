@@ -81,4 +81,7 @@ class rgbColor{
     static pink(){
         return new rgbColor(1,0,0.5);
     }
+    static random(){
+        return new rgbColor(Math.random(),Math.random(),Math.random());
+    }
 }

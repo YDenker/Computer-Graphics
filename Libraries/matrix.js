@@ -1,4 +1,4 @@
-class mat4 {
+class matrix4 {
     matArray; 
     /**
      * Creates a 4x4 identity matrix
@@ -9,7 +9,7 @@ class mat4 {
 
     /**
      * Unfinished -- Returns this matrix but normalized.
-     * @returns {mat4} normalized matrix
+     * @returns {matrix4} normalized matrix
      */
     normalize(){
         for (var column = 0; column < 4; column++){
@@ -20,10 +20,10 @@ class mat4 {
     }
     /** Returns the transposed 4x4 matrix.
      * 
-     * @returns {mat4} transposed matrix
+     * @returns {matrix4} transposed matrix
      */
     transpose(){
-        let out = new mat4();
+        let out = new matrix4();
         for(column = 0; column < 4; column++){
             for(row = 0; row < 4; row++){
                 out[column][row] = this.matArray[row][column];
@@ -33,7 +33,7 @@ class mat4 {
     }
     /** Returns a clone of the 4x4 matrix.*/
     clone(){
-        let out = new mat4();
+        let out = new matrix4();
         for(var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
                 out.matArray[column][row] = this.matArray[column][row];
@@ -43,11 +43,11 @@ class mat4 {
     }
 
     /** Add another matrix to this one.
-     * @param {mat4} rightMatrix right hand additor
-     * @returns {mat4} the result matrix of the operation
+     * @param {matrix4} rightMatrix right hand additor
+     * @returns {matrix4} the result matrix of the operation
      */
     addMat4(rightMatrix){
-        let out = new mat4();
+        let out = new matrix4();
         let temp = rightMatrix.matArray;
         for (var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
@@ -57,11 +57,11 @@ class mat4 {
         return out;
     }
     /** Subtract another matrix from this one.
-     * @param {mat4} rightMatrix right hand subtractor
-     * @returns {mat4} the result matrix of the operation
+     * @param {matrix4} rightMatrix right hand subtractor
+     * @returns {matrix4} the result matrix of the operation
      */
     subtractMat4(rightMatrix){
-        let out = new mat4();
+        let out = new matrix4();
         let temp = rightMatrix.matArray;
         for (var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
@@ -71,11 +71,11 @@ class mat4 {
         return out;
     }
     /** Multiply this matrix by another matrix.
-     * @param {mat4} rightMatrix right hand multiplicant
-     * @returns {mat4} the result matrix of the operation
+     * @param {matrix4} rightMatrix right hand multiplicant
+     * @returns {matrix4} the result matrix of the operation
      */
     multiplyMat4(rightMatrix){
-        let out = new mat4();
+        let out = new matrix4();
         let temp = rightMatrix.matArray;
         for (var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
@@ -99,8 +99,8 @@ class mat4 {
      * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
     */
     setPerspectiveProjection(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
-        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(nearClipping-farClipping);
-        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(farClipping+nearClipping)*nf,-1],[0,0,2*farClipping*nearClipping*nf,0]];
+        let f = 1.0 / Math.tan(fieldOfView/2);
+        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(nearClipping+farClipping)/(nearClipping-farClipping),-1],[0,0,2*nearClipping*farClipping/(nearClipping-farClipping),0]];
     }
     /** Convert to a orthographic projection matrix with the given bounds.
      * @param {number} left Left bound of the frustum

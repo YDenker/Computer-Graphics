@@ -14,6 +14,7 @@ CameraMovement(mainCamera);
 house();
 var minutes = minuteHand();
 var seconds = secondsHand();
+//var rCube = rotatingCube();
 
 var vertexData = entities.vertexData();
 var colorData = entities.colorData();
@@ -85,26 +86,24 @@ function Redraw(){
 }
 
 function Update(){
+    //rotateCube();
     UpdateClockMatrices();
 }
 
-function UpdateClockMatrices(){
+function rotateCube(){
+    var rotationspeed = Math.PI / 2 / 70;
+    rCube.transform.rotation.setRotate([0,0,rotationspeed]);
+}
 
+function UpdateClockMatrices(){
     var timeSecRad = new Date().getSeconds()* Math.PI / 30;
-    let secondsMatrix = new mat4();
-    secondsMatrix.setScaleX(.02);
-    secondsMatrix.setScaleY(.6);
-    secondsMatrix.setScaleZ(1);
-    secondsMatrix.setRotateZ(timeSecRad);
-    secondsMatrix.setTranslate([0,-.5,0]);
-    seconds.setTransform(secondsMatrix);
+    seconds.transform.setScale(.02,.6,1);
+    seconds.transform.setRotationZ(timeSecRad);
+    seconds.transform.setTranslation([0,-.5,0]);
 
     var timeMinRad = new Date().getMinutes()* Math.PI / 30;
-    let minutesMatrix = new mat4();
-    minutesMatrix.setScaleX(.05);
-    minutesMatrix.setScaleY(.5);
-    minutesMatrix.setScaleZ(1);
-    minutesMatrix.setRotateZ(timeMinRad);
-    minutesMatrix.setTranslate([0,-.5,0]);
-    minutes.setTransform(minutesMatrix);
+    minutes.transform.setScale(.05,.5,1);
+    minutes.transform.setRotationZ(timeMinRad);
+    minutes.transform.setTranslation([0,-.5,0]);
 }
+    

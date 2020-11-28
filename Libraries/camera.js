@@ -1,6 +1,6 @@
 class camera{
     mainCam; // bool true if this is the main camera
-    transform; // current position
+    transform; // current position, rotation and scale of the camera
     fieldOfView; // field of view in radian
     aspects; //width and height of the frustum
     clipping; // near and far clipping
@@ -12,12 +12,12 @@ class camera{
     constructor(widthAspect,heighAspect,mainCam = false, projectionType = 0){
         this.mainCam = mainCam;
         this.projectionType = projectionType;
-        this.transform = new mat4();
-        this.transform.setTranslate([0,0,-2]);
+        this.transform = new transformation();
+        this.transform.setTranslation([0,0,0]);
         this.fieldOfView = 70*Math.PI/180;
         this.aspects = [widthAspect,heighAspect];
         this.clipping = [1e-4,1e4];
-        this.projectionMatrix = new mat4();
+        this.projectionMatrix = new matrix4();
 
         this.updateProjectionMatrix();
 

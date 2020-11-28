@@ -10,7 +10,7 @@ class Entity{
         for(var i = 0; i < this.vertices.length; i++){
             this.color.push(1);
         }
-        this.transform = new mat4();
+        this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
         this.entityIndex = entitiesHolder.addEntity(this);
     }
@@ -20,14 +20,15 @@ class Entity{
     /** draws the entity in the given context */
     draw(webglContext,matrixUniformLocation, camera){
         // viewpoint of camera
-        let modelview = camera.transform.multiplyMat4(this.transform);
+        let modelview = camera.transform.matrix().multiplyMat4(this.transform.matrix());
         // projection matrix
         let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
-
+        debug.logOnce(this.transform, "Object Transform");
+        debug.logOnce(this.transform.matrix(), "Object matrix");
         debug.logOnce(modelview, "Modelview matrix");
         debug.logOnce(modelviewProjection, "MVProjection matrix");
 
-        webglContext.uniformMatrix4fv(matrixUniformLocation,false,this.transform.toFloat32Array());
+        webglContext.uniformMatrix4fv(matrixUniformLocation,false,this.transform.matrix().toFloat32Array());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){
@@ -37,10 +38,10 @@ class Entity{
         return this.color;
     }
     /** Set the transformation for the entity
-     * @param {mat4} matrix the transformation matrix of the entity
+     * @param {matrix4} matrix the transformation matrix of the entity
      */
-    setTransform(matrix){
-        this.transform = matrix;
+    setTransform(transformation){
+        this.transform = transformation;
     }
     /** Set the Color of the entity to a single color
      * @param {Float32Array} color a single color array

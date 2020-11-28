@@ -17,20 +17,17 @@ function scriptLoader(path, defer = true, callback){
 
 function loadLibraryScripts(){
     scriptLoader('../Libraries/debug.js');
-    scriptLoader('../Libraries/shaders.js');
-    scriptLoader('../Libraries/buffer.js');
-    scriptLoader('../Libraries/attributePointer.js');
-    scriptLoader('../Libraries/vector.js');
-    scriptLoader('../Libraries/matrix.js');
     scriptLoader('../Libraries/rgbColor.js');
-    scriptLoader('../Libraries/transformation.js');
-    scriptLoader('../Libraries/camera.js');
-    scriptLoader('../Libraries/entity.js');
-    scriptLoader('../Libraries/triangle.js');
-    scriptLoader('../Libraries/quad.js');
-    scriptLoader('../Libraries/cube.js');
-    scriptLoader('../Libraries/entities.js');
-    scriptLoader('../Libraries/templates.js');
+    scriptLoader('../Libraries/Shader/shaders.js');
+    scriptLoader('../Libraries/Shader/buffer.js');
+    scriptLoader('../Libraries/Shader/attributePointer.js');
+    scriptLoader('../Libraries/Math/vector.js');
+    scriptLoader('../Libraries/Math/matrix.js');
+    scriptLoader('../Libraries/Entities/transformation.js');
+    scriptLoader('../Libraries/Entities/camera.js');
+    scriptLoader('../Libraries/Entities/entity.js');
+    scriptLoader('../Libraries/Entities/shapes.js');
+    scriptLoader('../Libraries/Entities/templates.js');
     scriptLoader('main.js'); // always do this at the bottom!
 }
 

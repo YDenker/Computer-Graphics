@@ -2,35 +2,28 @@ class transformation{
     rotation;
     scale;
     position;
+
     constructor(){
-        this.rotation = [0,0,0];
-        this.scale = [1,1,1];
-        this.position = [0,0,0];
+        this.setRotation(new vector3(0,0,0));
+        this.setScale(new vector3(1,1,1));
+        this.setPosition(new vector3(0,0,0));
+    }
+    /** returns the model matrix of the object */
+    get(){
+        return this.position.multiplyMat4(this.rotation.multiplyMat4(this.scale));
     }
 
-    matrix(){
-        let out = new matrix4();
-        out.setScale(this.scale);
-        out.setRotate(this.rotation);
-        out.setTranslate(this.position);
-        return out;
+    setRotation(vector){
+        this.rotation = matrix4.rotate(vector);
     }
-    setRotation(radians){
-        this.rotation = radians;
+    setScale(vector){
+        this.scale = matrix4.scale(vector);
     }
-    setRotationX(radian){
-        this.rotation[0] = radian;
+    setPosition(vector){
+        this.position = matrix4.translate(vector);
     }
-    setRotationY(radian){
-        this.rotation[1] = radian;
-    }
-    setRotationZ(radian){
-        this.rotation[2] = radian;
-    }
-    setTranslation(transVector){
-        this.position = transVector;
-    }
-    setScale(scaleFactor){
-        this.scale = scaleFactor;
+
+    addRotation(vector){
+        this.rotation = this.rotation.multiplyMat4(matrix4.rotate(vector));
     }
 }

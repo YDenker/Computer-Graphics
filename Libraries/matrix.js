@@ -8,8 +8,8 @@ class matrix4 {
     }
 
     /**
-     * Unfinished -- Returns this matrix but normalized.
-     * @returns {matrix4} normalized matrix
+     * Unfinished -- this matrix but normalized.
+     *
      */
     normalize(){
         for (var column = 0; column < 4; column++){
@@ -18,9 +18,8 @@ class matrix4 {
             }
         }
     }
-    /** Returns the transposed 4x4 matrix.
+    /** Transposes the 4x4 matrix.
      * 
-     * @returns {matrix4} transposed matrix
      */
     transpose(){
         let out = new matrix4();
@@ -29,7 +28,7 @@ class matrix4 {
                 out[column][row] = this.matArray[row][column];
             }
         }
-        return out;
+        this.matArray = out;
     }
     /** Returns a clone of the 4x4 matrix.*/
     clone(){
@@ -79,28 +78,28 @@ class matrix4 {
         let temp = rightMatrix.matArray;
         for (var column = 0; column < 4; column++){
             for(var row = 0; row < 4; row++){
-                out.matArray[column][row] = this.matArray[column][0] * temp[0][row] +
-                                            this.matArray[column][1] * temp[1][row] +
-                                            this.matArray[column][2] * temp[2][row] +
-                                            this.matArray[column][3] * temp[3][row];
+                out.matArray[column][row] = temp[column][0] * this.matArray[0][row] +
+                                            temp[column][1] * this.matArray[1][row] +
+                                            temp[column][2] * this.matArray[2][row] +
+                                            temp[column][3] * this.matArray[3][row];
             }
         }
         return out;
     }
 
-    /** Set the matrix to its identity matrix */
-    setIdentity(){
-        this.matArray = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+    /** Returns an identity matrix */
+    static identity(){
+        return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
     }
-    /** Convert to a perspective projection matrix with the given bounds.
+    /** Generates a perspective projection matrix with the given bounds.
      * @param {number} fieldOfView Vertical field of view in radians
      * @param {number} aspectRatio Aspect ratio. typically viewport width/height
      * @param {number} near Near bound of the frustrum. Do not use 0!
      * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
     */
-    setPerspectiveProjection(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
-        let f = 1.0 / Math.tan(fieldOfView/2);
-        this.matArray = [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(nearClipping+farClipping)/(nearClipping-farClipping),-1],[0,0,2*nearClipping*farClipping/(nearClipping-farClipping),0]];
+    static perspectiveProjection(fieldOfView,aspectRatio,nearClipping = 1e-3,farClipping = 1e3){
+        let f = 1.0 / Math.tan(fieldOfView/2*Math.PI/180);
+        return new matrix4([[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,-(farClipping/(farClipping-nearClipping)),-1],[0,0,-(nearClipping*farClipping/(farClipping-nearClipping)),0]]);
     }
     /** Convert to a orthographic projection matrix with the given bounds.
      * @param {number} left Left bound of the frustum
@@ -110,109 +109,57 @@ class matrix4 {
      * @param {number} near Near bound of the frustum
      * @param {number} far Near bound of the frustum
      */
-    setOrthographicProjection(left,right,bottom,top,near,far){
-        let lr = 1/(left-right);
-        let bt = 1/(bottom-top);
-        let nf = 1/(near-far);
-        this.matArray = [[-2*lr,0,0,0],[0,-2*bt,0,0],[0,0,-2*nf,0],[(left+right)*lr,(top+bottom)*bt,(far+near)*nf,1]];
-    }
-    /** Set the scale factor of the matrix
-     * @param {float} scaleFactor scale
+    /** Generate a matrix with the given scaling.
+     * @param {float} scaleVector vector of scalings
      */
-    setScale(scaleFactor){
-        this.setScaleX(scaleFactor);
-        this.setScaleY(scaleFactor);
-        this.setScaleZ(scaleFactor);
-    }
-    /** Set the scale factor for the x axis of the matrix
-     * @param {float} scaleFactor scale
-     */
-    setScaleX(scaleFactor){
-        this.matArray[0][0] = scaleFactor;
-    }
-    /** Set the scale factor for the y axis of the matrix
-     * @param {float} scaleFactor scale
-     */
-    setScaleY(scaleFactor){
-        this.matArray[1][1] = scaleFactor;
-    }
-    /** Set the scale factor for the z axis of the matrix
-     * @param {float} scaleFactor scale
-     */
-    setScaleZ(scaleFactor){
-        this.matArray[2][2] = scaleFactor;
+    static scale(scaleVector){
+        return new matrix4([[scaleVector.x,0,0,0],[0,scaleVector.y,0,0],[0,0,scaleVector.z,0],[0,0,0,1]]);
     }
     /** Set the translation of the matrix.
      * @param {Float32Array} transVector A translation vector that is to be applied to the matrix.
     */
-    setTranslate(transVector){
-        var x = transVector[0],
-            y = transVector[1],
-            z = transVector[2],
+    static translate(transVector){
+        var x = transVector.x,
+            y = transVector.y,
+            z = transVector.z,
             w = 1;
-        this.matArray[3][0] = x;
-        this.matArray[3][1] = y;
-        this.matArray[3][2] = z;
-        this.matArray[3][3] = w;
+        return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[x,y,z,w]]);
     }
     /** Set the rotation of the matrix.
-     * @param {Float32Array} radiants A vector of the three angles x,y,z in radiant. 
+     * @param {Float32Array} radians A vector of the three angles x,y,z in radian. 
      */
-    setRotate(radiants){
-        var xrad = radiants[0],
-            yrad = radiants[1],
-            zrad = radiants[2];
-        this.setRotateX(xrad);
-        this.setRotateY(yrad);
-        this.setRotateZ(zrad);
+    static rotate(radians){
+        var xrad = radians.x,
+            yrad = radians.y,
+            zrad = radians.z;
+        let rotX = matrix4.rotateX(xrad),
+            rotY = matrix4.rotateY(yrad),
+            rotZ = matrix4.rotateZ(zrad);
+        return rotX.multiplyMat4(rotY.multiplyMat4(rotZ));
     }
     /** Set the rotation about the X axis of the matrix.
-     * @param {float} radiant The rotation amount in radiant. 
+     * @param {float} radian The rotation amount in radian. 
      */
-    setRotateX(radiant){
-        let cosine = Math.cos(radiant);
-        let sine = Math.sin(radiant);
-        let clone = this.clone().matArray;
-        this.matArray[0][1] = clone[0][1] * cosine + clone[0][2] * sine;
-        this.matArray[1][1] = clone[1][1] * cosine + clone[1][2] * sine;
-        this.matArray[2][1] = clone[2][1] * cosine + clone[2][2] * sine;
-        this.matArray[3][1] = clone[3][1] * cosine + clone[3][2] * sine;
-        this.matArray[0][2] = clone[0][2] * cosine - clone[0][1] * sine;
-        this.matArray[1][2] = clone[1][2] * cosine - clone[1][1] * sine;
-        this.matArray[2][2] = clone[2][2] * cosine - clone[2][1] * sine;
-        this.matArray[3][2] = clone[3][2] * cosine - clone[3][1] * sine;
+    static rotateX(radian){
+        let cosine = Math.cos(radian);
+        let sine = Math.sin(radian);
+        return new matrix4([[1,0,0,0],[0,cosine,sine,0],[0,-sine,cosine,0],[0,0,0,1]]);
     }
     /** Set the rotation about the Y axis of the matrix.
-     * @param {float} radiant The rotation amount in radiant. 
+     * @param {float} radian The rotation amount in radian. 
      */
-    setRotateY(radiant){
-        let cosine = Math.cos(radiant);
-        let sine = Math.sin(radiant);
-        let clone = this.clone().matArray;
-        this.matArray[0][0] = clone[0][0] * cosine - clone[0][2] * sine;
-        this.matArray[1][0] = clone[1][0] * cosine - clone[1][2] * sine;
-        this.matArray[2][0] = clone[2][0] * cosine - clone[2][2] * sine;
-        this.matArray[3][0] = clone[3][0] * cosine - clone[3][2] * sine;
-        this.matArray[0][2] = clone[0][0] * sine + clone[0][2] * cosine;
-        this.matArray[1][2] = clone[1][0] * sine + clone[1][2] * cosine;
-        this.matArray[2][2] = clone[2][0] * sine + clone[2][2] * cosine;
-        this.matArray[3][2] = clone[3][0] * sine + clone[3][2] * cosine;
+    static rotateY(radian){
+        let cosine = Math.cos(radian);
+        let sine = Math.sin(radian);
+        return new matrix4([[cosine,0,-sine,0],[0,1,0,0],[sine,0,cosine,0],[0,0,0,1]]);
     }
     /** Set the rotation about the Z axis of the matrix.
-     * @param {float} radiant The rotation amount in radiant. 
+     * @param {float} radian The rotation amount in radian. 
      */
-    setRotateZ(radiant){
-        let cosine = Math.cos(radiant);
-        let sine = Math.sin(radiant);
-        let clone = this.clone().matArray;
-        this.matArray[0][0] = clone[0][0] * cosine + clone[0][1] * sine;
-        this.matArray[1][0] = clone[1][0] * cosine + clone[1][1] * sine;
-        this.matArray[2][0] = clone[2][0] * cosine + clone[2][1] * sine;
-        this.matArray[3][0] = clone[3][0] * cosine + clone[3][1] * sine;
-        this.matArray[0][1] = clone[0][1] * cosine - clone[0][0] * sine;
-        this.matArray[1][1] = clone[1][1] * cosine - clone[1][0] * sine;
-        this.matArray[2][1] = clone[2][1] * cosine - clone[2][0] * sine;
-        this.matArray[3][1] = clone[3][1] * cosine - clone[3][0] * sine;
+    static rotateZ(radian){
+        let cosine = Math.cos(radian);
+        let sine = Math.sin(radian);
+        return new matrix4([[cosine,sine,0,0],[-sine,cosine,0,0],[0,0,1,0],[0,0,0,1]]);
     }
     /** Convert the matrix to a Float32Array.
      * @param {Float32Array}
@@ -225,15 +172,5 @@ class matrix4 {
             }
         }
         return out;
-    }
-    /** Generate a perspective projection matrix with the given bounds.
-     * @param {number} fieldOfView Vertical field of view in radians
-     * @param {number} aspectRatio Aspect ratio. typically viewport width/height
-     * @param {number} near Near bound of the frustrum. Do not use 0!
-     * @param {number} far Far bound of the frustrum. Do not use numbers <=0!
-    */
-    static perspective(fieldOfView,aspectRatio,nearClipping = 1e-4,farClipping = 1e4){
-        let f = 1.0 / Math.tan(fieldOfView/2), nf = 1/(nearClipping-farClipping);
-        return [[f/aspectRatio,0,0,0],[0,f,0,0],[0,0,(farClipping+nearClipping)*nf,-1],[0,0,2*farClipping*nearClipping*nf,0]];
     }
 }

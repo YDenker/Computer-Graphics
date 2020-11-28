@@ -1,23 +1,19 @@
 class camera{
     mainCam; // bool true if this is the main camera
     transform; // current position, rotation and scale of the camera
-    fieldOfView; // field of view in radian
+    fieldOfView; // field of view in degree
     aspects; //width and height of the frustum
     clipping; // near and far clipping
 
-    projectionType; // 0 = perspective, 1 = orthographic
-
     projectionMatrix; // the projection matrix
 
-    constructor(widthAspect,heighAspect,mainCam = false, projectionType = 0){
+    constructor(widthAspect,heighAspect,mainCam = false){
         this.mainCam = mainCam;
-        this.projectionType = projectionType;
         this.transform = new transformation();
-        this.transform.setTranslation([0,0,0]);
-        this.fieldOfView = 70*Math.PI/180;
+        this.transform.setPosition(new vector3(0,0,-1));
+        this.fieldOfView = 70;
         this.aspects = [widthAspect,heighAspect];
-        this.clipping = [1e-4,1e4];
-        this.projectionMatrix = new matrix4();
+        this.clipping = [1e-3,1e3];
 
         this.updateProjectionMatrix();
 
@@ -26,9 +22,7 @@ class camera{
     }
     /** needs to be called when either one of the relevant camera values have changed */
     updateProjectionMatrix(){
-        if(this.projectionType == 0) this.projectionMatrix.setPerspectiveProjection(this.fieldOfView,this.aspects[0]/this.aspects[1],this.clipping[0],this.clipping[1]);
-        else this.projectionMatrix.setOrthographicProjection(this.aspects[0]/2,this.aspects[0]/2,this.aspects[1]/2,this.aspects[1]/2,this.clipping[0],this.clipping[1]);
-        debug.logOnce(this.projectionMatrix, "Projetion matrix");
+        this.projectionMatrix = matrix4.perspectiveProjection(this.fieldOfView,this.aspects[0]/this.aspects[1],this.clipping[0],this.clipping[1]);
     }
     /** Sets a new field of view for the camera
      * @param {number} fov field of view in either degree or radian

@@ -20,6 +20,7 @@ function loadLibraryScripts(){
     scriptLoader('../Libraries/shaders.js');
     scriptLoader('../Libraries/buffer.js');
     scriptLoader('../Libraries/attributePointer.js');
+    scriptLoader('../Libraries/vector.js');
     scriptLoader('../Libraries/matrix.js');
     scriptLoader('../Libraries/rgbColor.js');
     scriptLoader('../Libraries/transformation.js');

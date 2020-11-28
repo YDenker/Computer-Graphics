@@ -11,10 +11,10 @@ var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 CameraMovement(mainCamera);
 
 //drawing from the templates.js
-house();
-var minutes = minuteHand();
-var seconds = secondsHand();
-//var rCube = rotatingCube();
+//house();
+//var minutes = minuteHand();
+//var seconds = secondsHand();
+var rCube = rotatingCube();
 
 var vertexData = entities.vertexData();
 var colorData = entities.colorData();
@@ -71,8 +71,8 @@ canvas.setAttribute("tabindex","0");
     }, true);
 }
 
-debug.log(entities,"Entities");
 
+debug.log(entities,"Entities");
 function animationLoop(){
     initCanvas();
     Update();
@@ -86,13 +86,13 @@ function Redraw(){
 }
 
 function Update(){
-    //rotateCube();
-    UpdateClockMatrices();
+    rotateCube();
+    //UpdateClockMatrices();
 }
 
 function rotateCube(){
     var rotationspeed = Math.PI / 2 / 70;
-    rCube.transform.rotation.setRotate([0,0,rotationspeed]);
+    rCube.transform.addRotation(new vector3(rotationspeed,rotationspeed,rotationspeed));
 }
 
 function UpdateClockMatrices(){

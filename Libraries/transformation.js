@@ -22,8 +22,13 @@ class transformation{
     setPosition(vector){
         this.position = matrix4.translate(vector);
     }
-
     addRotation(vector){
         this.rotation = this.rotation.multiplyMat4(matrix4.rotate(vector));
+    }
+    addScale(vector){
+        this.scale = this.scale.multiplyMat4(matrix4.scale(vector));
+    }
+    addPosition(vector){
+        this.position = this.position.multiplyMat4(matrix4.translate(vector));
     }
 }

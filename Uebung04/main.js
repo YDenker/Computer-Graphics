@@ -8,12 +8,12 @@ var entities = e.getInstance();
 //creating a camera
 var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 
-CameraMovement(mainCamera);
+CameraMovement(mainCamera,0.1);
 
 //drawing from the templates.js
-//house();
-//var minutes = minuteHand();
-//var seconds = secondsHand();
+house();
+var minutes = minuteHand();
+var seconds = secondsHand();
 var rCube = rotatingCube();
 
 var vertexData = entities.vertexData();
@@ -57,17 +57,34 @@ function initCanvas(){
     gl.depthMask(true);
 }
 
-function CameraMovement(camera){
-canvas.setAttribute("tabindex","0");
+function CameraMovement(camera,speed){
+    canvas.setAttribute("tabindex","0");
     canvas.addEventListener('keypress', function(evt){
         switch (evt.charCode){
             case 43:
-                console.log("zoom in");
+                camera.transform.addPosition(new vector3(0,0,speed));
                 break;
             case 45:
-                console.log("zoom out");
+                camera.transform.addPosition(new vector3(0,0,-speed));
                 break;
         }
+    }, true);
+    canvas.addEventListener('keydown',function(evt){
+        switch (evt.keyCode){
+            case 37:
+                camera.transform.addPosition(new vector3(speed,0,0));
+                break;
+            case 38:
+                camera.transform.addPosition(new vector3(0,-speed,0));
+                break;
+            case 39:
+                camera.transform.addPosition(new vector3(-speed,0,0));
+                break;
+            case 40:
+                camera.transform.addPosition(new vector3(0,speed,0));
+                break;
+        }
+
     }, true);
 }
 
@@ -87,23 +104,19 @@ function Redraw(){
 
 function Update(){
     rotateCube();
-    //UpdateClockMatrices();
+    UpdateClockMatrices();
 }
 
 function rotateCube(){
     var rotationspeed = Math.PI / 2 / 70;
-    rCube.transform.addRotation(new vector3(rotationspeed,rotationspeed,rotationspeed));
+    rCube.transform.addRotation(new vector3(rotationspeed*2,rotationspeed*.3,rotationspeed));
 }
-
+    
 function UpdateClockMatrices(){
-    var timeSecRad = new Date().getSeconds()* Math.PI / 30;
-    seconds.transform.setScale(.02,.6,1);
-    seconds.transform.setRotationZ(timeSecRad);
-    seconds.transform.setTranslation([0,-.5,0]);
-
+    var timeSecRad = new Date().getSeconds()* Math.PI / 30;  
+    seconds.transform.setRotation(new vector3(0,0,-timeSecRad));
+    
     var timeMinRad = new Date().getMinutes()* Math.PI / 30;
-    minutes.transform.setScale(.05,.5,1);
-    minutes.transform.setRotationZ(timeMinRad);
-    minutes.transform.setTranslation([0,-.5,0]);
+    minutes.transform.setRotation(new vector3(0,0,-timeMinRad));
 }
     

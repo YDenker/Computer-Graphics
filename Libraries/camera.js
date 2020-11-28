@@ -10,7 +10,7 @@ class camera{
     constructor(widthAspect,heighAspect,mainCam = false){
         this.mainCam = mainCam;
         this.transform = new transformation();
-        this.transform.setPosition(new vector3(0,0,-1));
+        this.transform.setPosition(new vector3(0,0,-5));
         this.fieldOfView = 70;
         this.aspects = [widthAspect,heighAspect];
         this.clipping = [1e-3,1e3];

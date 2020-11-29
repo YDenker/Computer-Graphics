@@ -5,36 +5,50 @@ if(!gl){
     throw new Error('WebGL not supported');
 }
 var entities = e.getInstance();
+//creating a camera
+var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 
-//drawing from the templates.js
+// load and bind texture
+addTexture2D(gl,"../assets/whiteTexture.png");
+addTexture2D(gl,"../assets/wallTexture.png");
+
+// drawing from the templates.js
 house();
 var minutes = minuteHand();
 var seconds = secondsHand();
 
+// Getting the data from all entities
 var vertexData = entities.vertexData();
 var colorData = entities.colorData();
+var uvData = entities.uvData();
 
+// create Buffer for each data type
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
-
 var colorBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(colorData),gl.STATIC_DRAW);
+var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
 
+// create vertex and fragment shader
 var vertexShader = new myVertexShader(gl);
-
 var fragmentShader = new myFragmentShader(gl);
 
+// create the program and attach all shaders
 var program = gl.createProgram();
 attachShader(gl,program, vertexShader);
 attachShader(gl,program, fragmentShader);
 gl.linkProgram(program);
 
+// create attribute pointers
 createVertexAttributePointer(gl,program,positionBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
-
 createVertexAttributePointer(gl,program,colorBuffer,gl.ARRAY_BUFFER,`color`,gl.FLOAT,3,false,0,0);
+createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,'uv',gl.FLOAT,2,false,0,0);
 
+// use the reated program inside the webgl context
 gl.useProgram(program);
+debug.log(entities,"Entities");
 
 var uniformLocations = {
     matrix: gl.getUniformLocation(program, `matrix`),
+    textureID: gl.getUniformLocation(program,`textureID`),
 };
 
 function initCanvas(){
@@ -51,7 +65,6 @@ function initCanvas(){
     gl.colorMask(true,true,true,true); //Puffer vor Schreiben maskieren
     gl.depthMask(true);
 }
-console.log(entities);
 
 function animationLoop(){
     initCanvas();
@@ -62,33 +75,17 @@ function animationLoop(){
 animationLoop();
 
 function Redraw(){
-    entities.draw(gl,uniformLocations.matrix);
+    entities.draw(gl,uniformLocations);
 }
 
 function Update(){
     UpdateClockMatrices();
 }
-
+    
 function UpdateClockMatrices(){
-
-    var timeSecRad = new Date().getSeconds()* Math.PI / 30;
-    let secondsMatrix = new mat4();
-    secondsMatrix.setScaleX(.02);
-    secondsMatrix.setScaleY(.6);
-    secondsMatrix.setScaleZ(1);
-    secondsMatrix.setRotateZ(timeSecRad);
-    secondsMatrix.setTranslate([0,-.5,0]);
-    seconds.setTransform(secondsMatrix);
-
+    var timeSecRad = new Date().getSeconds()* Math.PI / 30;  
+    seconds.transform.setRotation(new vector3(0,0,-timeSecRad));
+    
     var timeMinRad = new Date().getMinutes()* Math.PI / 30;
-    let minutesMatrix = new mat4();
-    minutesMatrix.setScaleX(.05);
-    minutesMatrix.setScaleY(.5);
-    minutesMatrix.setScaleZ(1);
-    minutesMatrix.setRotateZ(timeMinRad);
-    minutesMatrix.setTranslate([0,-.5,0]);
-    minutes.setTransform(minutesMatrix);
+    minutes.transform.setRotation(new vector3(0,0,-timeMinRad));
 }
-
-
-

@@ -10,36 +10,48 @@ var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 
 CameraMovement(mainCamera,0.1);
 
-//drawing from the templates.js
+// load and bind texture
+addTexture2D(gl,"../assets/whiteTexture.png");
+addTexture2D(gl,"../assets/wallTexture.png");
+
+// drawing from the templates.js
 house();
 var minutes = minuteHand();
 var seconds = secondsHand();
 var rCube = rotatingCube();
 
+// Getting the data from all entities
 var vertexData = entities.vertexData();
 var colorData = entities.colorData();
+var uvData = entities.uvData();
 
+// create Buffer for each data type
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
-
 var colorBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(colorData),gl.STATIC_DRAW);
+var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
 
+// create vertex and fragment shader
 var vertexShader = new myVertexShader(gl);
-
 var fragmentShader = new myFragmentShader(gl);
 
+// create the program and attach all shaders
 var program = gl.createProgram();
 attachShader(gl,program, vertexShader);
 attachShader(gl,program, fragmentShader);
 gl.linkProgram(program);
 
+// create attribute pointers
 createVertexAttributePointer(gl,program,positionBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
-
 createVertexAttributePointer(gl,program,colorBuffer,gl.ARRAY_BUFFER,`color`,gl.FLOAT,3,false,0,0);
+createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,'uv',gl.FLOAT,2,false,0,0);
 
+// use the reated program inside the webgl context
 gl.useProgram(program);
+debug.log(entities,"Entities");
 
 var uniformLocations = {
     matrix: gl.getUniformLocation(program, `matrix`),
+    textureID: gl.getUniformLocation(program,`textureID`),
 };
 
 function initCanvas(){
@@ -88,8 +100,6 @@ function CameraMovement(camera,speed){
     }, true);
 }
 
-
-debug.log(entities,"Entities");
 function animationLoop(){
     initCanvas();
     Update();
@@ -99,7 +109,7 @@ function animationLoop(){
 animationLoop();
 
 function Redraw(){
-    entities.draw(gl,uniformLocations.matrix);
+    entities.draw(gl,uniformLocations);
 }
 
 function Update(){

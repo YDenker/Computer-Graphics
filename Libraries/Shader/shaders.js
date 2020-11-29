@@ -17,10 +17,13 @@ class myVertexShader{
         precision mediump float;
         attribute vec3 position;
         attribute vec3 color;
+        attribute vec2 uv;
         varying vec3 vColor;
+        varying vec2 vUV;
         uniform mat4 matrix;
         void main() {
             vColor = color;
+            vUV = uv;
             gl_Position = matrix * vec4(position, 1);
         }
         `);
@@ -39,8 +42,10 @@ class myFragmentShader{
         webGLContext.shaderSource(this.shader, `
         precision mediump float;
         varying vec3 vColor;
+        varying vec2 vUV;
+        uniform sampler2D textureID;
         void main() {
-            gl_FragColor = vec4(vColor, 1);
+            gl_FragColor = texture2D(textureID,vUV) * vec4(vColor,1);
         }
         `);
         webGLContext.compileShader(this.shader);

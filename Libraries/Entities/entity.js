@@ -1,30 +1,41 @@
 class Entity{
     vertices;
     color;
+    uvCoords;
     transform;
     entityIndex;
     vertexAmount;
+
+    textureID;
 
     init(entitiesHolder){
         this.color = [];
         for(var i = 0; i < this.vertices.length; i++){
             this.color.push(1);
         }
+        if(typeof this.uvCoords == 'undefined'){
+            this.uvCoords = [];
+            for(var i = 0; i < this.vertices.length/3*2;i++){
+                this.uvCoords.push(0);
+            }
+        }
         this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
+        this.textureID = 0;
         this.entityIndex = entitiesHolder.addEntity(this);
     }
 
     Update(){ /** This is designed after the concept the unity game engine uses. This function is supposed to be overriden.*/        
     }
     /** draws the entity in the given context */
-    draw(webglContext,matrixUniformLocation, camera){
+    draw(webglContext,uniformLocations, camera){
         // viewpoint of camera
         let modelview = camera.transform.get().multiplyMat4(this.transform.get());
         // projection matrix
         let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
 
-        webglContext.uniformMatrix4fv(matrixUniformLocation,false,modelviewProjection.toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.matrix,false,modelviewProjection.toFloat32Array());
+        webglContext.uniform1i(uniformLocations.textureID,this.textureID);
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){
@@ -32,6 +43,9 @@ class Entity{
     }
     getColor(){
         return this.color;
+    }
+    getUVCoords(){
+        return this.uvCoords;
     }
     /** Set the Color of the entity to a single color
      * @param {Float32Array} color a single color array
@@ -56,6 +70,12 @@ class Entity{
      */
     setVertices(vertices){
         this.vertices = vertices;
+    }
+    /** Set the uv coordinates for the entity
+     * @param {Float32Array} uvCoords an array of uv coordinates for each vertex
+     */
+    setUVCoords(uvCoords){
+        this.uvCoords = uvCoords;
     }
 }
 
@@ -90,10 +110,18 @@ class entityholder{
         });
         return colorData;
     }
-    /** Calls the draw function of every entity in the entities array. */
-    draw(webglContent,matrixUniformLocation){
+    /** returns the uvdata of every entity in the entities array */
+    uvData(){
+        var uvData = [];
         this.entities.forEach(element => {
-            element.draw(webglContent,matrixUniformLocation, this.mainCamera);
+            uvData = uvData.concat(element.getUVCoords());
+        })
+        return uvData;
+    }
+    /** Calls the draw function of every entity in the entities array. */
+    draw(webglContent,uniformLocations){
+        this.entities.forEach(element => {
+            element.draw(webglContent,uniformLocations, this.mainCamera);
         });
     }
 }

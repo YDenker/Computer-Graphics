@@ -18,6 +18,7 @@ function scriptLoader(path, defer = true, callback){
 function loadLibraryScripts(){
     scriptLoader('../Libraries/debug.js');
     scriptLoader('../Libraries/rgbColor.js');
+    scriptLoader('../Libraries/textures.js');
     scriptLoader('../Libraries/Shader/shaders.js');
     scriptLoader('../Libraries/Shader/buffer.js');
     scriptLoader('../Libraries/Shader/attributePointer.js');

@@ -43,7 +43,8 @@ function rotatingCube(){ // dynamic
     var entitiesholder = e.getInstance();
     var c = new cube(entitiesholder);
     c.setSidesColorRGBRandom();
+    c.textureID = 1;
     c.transform.setScale(new vector3(0.5,0.5,0.5));
-    c.transform.setPosition(new vector3(2,2,0));
+    c.transform.setPosition(new vector3(1.5,1.5,0));
     return c;
 }

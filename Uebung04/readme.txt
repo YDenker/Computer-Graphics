@@ -14,11 +14,8 @@ Um die Aufgabe zum Zeitpunkt der Fertigstellung mit der bis dahin ausgebauten Li
 Deferred Loading Bug:
 
 Weil ich alles in eigene Library scripts aufgeteilt habe musste ich mir einen eigenen libLoader erstellen, der die scripte alle deferred läd.
-Ich habe ein bisschen recherche betrieben und festgestellt, dass async laden in meinem Fall nicht funktioniert, weil die scripte in beliebiger reihenfolge geladen werden.
-Da bei mir die Reihenfolge sehr wichtig ist lade ich sie alle deferred. Trozdem passiert es mir manchmal, dass die Reihenfolge nicht beachtet wird.
-Ich muss mich nochmal um eine bessere Methode umschauen. Wenn ich es bis zur nächsten Abgabe nicht geschafft habe, dann wird dieser Text hier stehen bleiben!
-Wenn der Fall eintritt, dann hat bei mir immer geholfen in der main.js etwas zu ändern und zu speichern und dann nochmal neu zu laden.
-Wenn in der main zuletzt gespeichert wurde klappt es komischer weise immer.
-Ich hoffe ich finde vorher eine Lösung!
+Ich habe ein bisschen recherche betrieben und festgestellt, dass async laden in meinem Fall nicht funktioniert, weil die scripte in beliebiger Reihenfolge geladen werden.
+Da bei mir die Reihenfolge sehr wichtig ist lade ich sie alle deferred. Wenn aus irgend einem Grund auf der Seite nix angezeigt wird und ein reference Error passiert, einmal die Seite neu laden.
+Ich habe leider noch nicht herausgefunden, warum manchmal beim Erststart die Sripte in falscher Reihenfolge geladen werden.
 
 Yannick Denker

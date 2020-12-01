@@ -120,13 +120,10 @@ class uvsphere extends Entity{
             }
             points.push(tempArr);
         }
+        // create a quad for each point
         for(var i = 0; i < parallels; i++){
             for(var j = 0; j < meridians; j++){
                 var point = points[i][j];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
-                point = points[i+1][j];
                 vertices.push(point.x);
                 vertices.push(point.y);
                 vertices.push(point.z);
@@ -134,6 +131,24 @@ class uvsphere extends Entity{
                 vertices.push(point.x);
                 vertices.push(point.y);
                 vertices.push(point.z);
+                point = points[i+1][j];
+                vertices.push(point.x);
+                vertices.push(point.y);
+                vertices.push(point.z);
+                
+                point = points[i][j+1];
+                vertices.push(point.x);
+                vertices.push(point.y);
+                vertices.push(point.z);
+                point = points[i+1][j+1];
+                vertices.push(point.x);
+                vertices.push(point.y);
+                vertices.push(point.z);
+                point = points[i+1][j];
+                vertices.push(point.x);
+                vertices.push(point.y);
+                vertices.push(point.z);
+                
             }
         }
         

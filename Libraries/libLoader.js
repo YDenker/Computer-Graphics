@@ -22,6 +22,7 @@ function loadLibraryScripts(){
     scriptLoader('../Libraries/Shader/shaders.js');
     scriptLoader('../Libraries/Shader/buffer.js');
     scriptLoader('../Libraries/Shader/attributePointer.js');
+    scriptLoader('../Libraries/Math/standard.js');
     scriptLoader('../Libraries/Math/vector.js');
     scriptLoader('../Libraries/Math/matrix.js');
     scriptLoader('../Libraries/Entities/transformation.js');

@@ -5,14 +5,12 @@ function house(){ // static
                       0.6,0,0,
                       -0.6,0,0,]);
     roof.setColorRGB(rgbColor.red());
+    roof.textureID = 1;
     var wall = new quad(entitiesholder);
-    wall.setVertices([0.5,0,0,
-                      -0.5,0,0,
-                      -0.5,-1,0,
-                      -0.5,-1,0,
-                       0.5,0,0,
-                       0.5,-1,0,]);
-    wall.setColorRGB(rgbColor.yellow());
+    wall.transform.setPosition(new vector3(0,-0.5,0));
+    wall.transform.setScale(new vector3(0.5,0.5,0.5));
+    wall.setColorRGB(rgbColor.maroon());
+    wall.textureID = 2;
 }
 
 function minuteHand(){ //dynamic
@@ -23,7 +21,7 @@ function minuteHand(){ //dynamic
                      -0.6,0,0,]);
     minuteHand.transform.setScale(new vector3(.05,.5,1));
     minuteHand.transform.setPosition(new vector3(0,-.5,0));
-    minuteHand.setColorRGB(rgbColor.black());
+    minuteHand.setColorRGB(rgbColor.teal());
     return minuteHand;
 }
 
@@ -47,4 +45,11 @@ function rotatingCube(){ // dynamic
     c.transform.setScale(new vector3(0.5,0.5,0.5));
     c.transform.setPosition(new vector3(1.5,1.5,0));
     return c;
+}
+
+function sphere(){ // dynamic
+    var entitiesholder = e.getInstance();
+    var s = new uvsphere(entitiesholder,1,36,36);
+    s.setFaceColorRandom();
+    return s;
 }

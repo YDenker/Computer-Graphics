@@ -13,13 +13,10 @@ CameraMovement(mainCamera,0.1);
 // load and bind texture
 addTexture2D(gl,"../assets/whiteTexture.png");
 addTexture2D(gl,"../assets/wallTexture.png");
-addTexture2D(gl,"../assets/woodPatternTexture.png");
 
 // drawing from the templates.js
-house();
-var minutes = minuteHand();
-var seconds = secondsHand();
 var rCube = rotatingCube();
+var sphere = sphere();
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
@@ -96,6 +93,12 @@ function CameraMovement(camera,speed){
             case 40:
                 camera.transform.addPosition(new vector3(0,speed,0));
                 break;
+            case 65:
+                camera.transform.addRotation(new vector3(0,0.2,0));
+                break;
+            case 68:
+                camera.transform.addRotation(new vector3(0,-0.2,0));
+                break;
         }
 
     }, true);
@@ -115,19 +118,10 @@ function Redraw(){
 
 function Update(){
     rotateCube();
-    UpdateClockMatrices();
 }
 
 function rotateCube(){
     var rotationspeed = Math.PI / 2 / 70;
     rCube.transform.addRotation(new vector3(rotationspeed*2,rotationspeed*.3,rotationspeed));
-}
-    
-function UpdateClockMatrices(){
-    var timeSecRad = new Date().getSeconds()* Math.PI / 30;  
-    seconds.transform.setRotation(new vector3(0,0,-timeSecRad));
-    
-    var timeMinRad = new Date().getMinutes()* Math.PI / 30;
-    minutes.transform.setRotation(new vector3(0,0,-timeMinRad));
 }
     

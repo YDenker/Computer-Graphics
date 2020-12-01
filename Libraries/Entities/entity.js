@@ -56,6 +56,17 @@ class Entity{
             this.color = this.color.concat(color);
         }
     }
+    /** Set the Color of the entity to a random rgb color for each tri
+     */
+    setFaceColorRandom(){
+        this.color = [];
+        for(var i = 0; i < this.vertexAmount/3; i++){
+            var random = rgbColor.random().get()
+            this.color = this.color.concat(random);
+            this.color = this.color.concat(random);
+            this.color = this.color.concat(random);
+        }
+    }
     /** Set the Color of the entity to a single rgb color
      * @param {rgbColor} rgbColor a single rgb color
      */

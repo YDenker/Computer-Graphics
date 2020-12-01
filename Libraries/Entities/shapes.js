@@ -102,11 +102,10 @@ class cube extends Entity{
 }
 
 class uvsphere extends Entity{
-    constructor(entitiesHolder,radius,parallels,meridians){
+    constructor(entitiesHolder,radius,parallels = 20,meridians = 20){
         super();
         var points = [];
         var vertices = [], pi = Math.PI, halfpi = Math.PI / 2;
-        debug.log(points, "Points");
         // calculate every vertex once and store it in an 2d array
         for(var i = 0; i < parallels +1; i++){
             var latitude = map(i,0,parallels,-halfpi,halfpi);

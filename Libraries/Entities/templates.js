@@ -49,7 +49,7 @@ function rotatingCube(){ // dynamic
 
 function sphere(){ // dynamic
     var entitiesholder = e.getInstance();
-    var s = new uvsphere(entitiesholder,1,36,36);
+    var s = new uvsphere(entitiesholder,1,20,20);
     s.setFaceColorRandom();
     return s;
 }

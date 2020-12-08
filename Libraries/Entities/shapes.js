@@ -1,3 +1,13 @@
+const pivots = { //this is especially used in a Cube and maybe futher shapes.
+    BOT: new vector3(0,-0.5,0),
+    TOP: new vector3(0,0.5,0),
+    LEFT: new vector3(-.5,0,0),
+    RIGHT: new vector3(0.5,0,0),
+    FRONT: new vector3(0,0,-0.5),
+    BACK: new vector3(0,0,0.5),
+    CENTER: new vector3(0,0,0)
+}
+
 class tri extends Entity{
     
     constructor(entitiesHolder){
@@ -41,44 +51,46 @@ class quad extends Entity{
 }
 
 class cube extends Entity{
-    constructor(entitiesHolder){
+    constructor(entitiesHolder, pivot = pivots.CENTER){
         super();
-        this.vertices =[-.5,.5,-.5, // front face
-                        .5,.5,-.5,
-                        -.5,-.5,-.5,
-                        .5,.5,-.5,
-                        .5,-.5,-.5,
-                        -.5,-.5,-.5,
-                        .5,.5,-.5, // right face
-                        .5,.5,.5,
-                        .5,-.5,-.5,
-                        .5,.5,.5,
-                        .5,-.5,.5,
-                        .5,-.5,-.5,
-                        .5,.5,.5, // back face
-                        -.5,.5,.5,
-                        .5,-.5,.5,
-                        -.5,.5,.5,
-                        -.5,-.5,.5,
-                        .5,-.5,.5,
-                        -.5,.5,.5, // left face
-                        -.5,.5,-.5,
-                        -.5,-.5,.5,
-                        -.5,.5,-.5,
-                        -.5,-.5,-.5,
-                        -.5,-.5,.5,
-                        -.5,.5,.5, // up face
-                        .5,.5,.5,
-                        -.5,.5,-.5,
-                        .5,.5,.5,
-                        .5,.5,-.5,
-                        -.5,.5,-.5,
-                        .5,-.5,.5, // down face
-                        -.5,-.5,.5,
-                        .5,-.5,-.5,
-                        -.5,-.5,.5,
-                        -.5,-.5,-.5,
-                        .5,-.5,-.5,];
+        let x = 0.5 - pivot.x, y = 0.5 - pivot.y, z = 0.5 - pivot.z;
+        let nX = -0.5 - pivot.x, nY = -0.5 - pivot.y, nZ = -0.5 - pivot.z;
+        this.vertices =[nX,y,nZ, // front face
+                        x,y,nZ,
+                        nX,nY,nZ,
+                        x,y,nZ,
+                        x,nY,nZ,
+                        nX,nY,nZ,
+                        x,y,nZ, // right face
+                        x,y,z,
+                        x,nY,nZ,
+                        x,y,z,
+                        x,nY,z,
+                        x,nY,nZ,
+                        x,y,z, // back face
+                        nX,y,z,
+                        x,nY,z,
+                        nX,y,z,
+                        nX,nY,z,
+                        x,nY,z,
+                        nX,y,z, // left face
+                        nX,y,nZ,
+                        nX,nY,z,
+                        nX,y,nZ,
+                        nX,nY,nZ,
+                        nX,nY,z,
+                        nX,y,z, // up face
+                        x,y,z,
+                        nX,y,nZ,
+                        x,y,z,
+                        x,y,nZ,
+                        nX,y,nZ,
+                        x,nY,z, // down face
+                        nX,nY,z,
+                        x,nY,nZ,
+                        nX,nY,z,
+                        nX,nY,nZ,
+                        x,nY,nZ,];
         let uvs = [];
         for(var i = 0; i < 6; i++){
             uvs = uvs.concat([0,1,1,1,0,0,1,1,1,0,0,0]);
@@ -101,6 +113,7 @@ class cube extends Entity{
     }
 }
 
+// UV Coords are not yet calculated :/
 class uvsphere extends Entity{
     constructor(entitiesHolder,radius,parallels = 20,meridians = 20){
         super();

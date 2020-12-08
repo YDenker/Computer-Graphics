@@ -51,5 +51,21 @@ function sphere(){ // dynamic
     var entitiesholder = e.getInstance();
     var s = new uvsphere(entitiesholder,1,20,20);
     s.setFaceColorRandom();
+    s.transform.setPosition(new vector3(-.5,0,-3));
     return s;
+}
+
+function treeThing(){ //static
+    var entitiesholder = e.getInstance();
+    var tBase = new cube(entitiesholder);
+    tBase.transform.setScale(new vector3(1,4,1));
+    tBase.setColorRGB(rgbColor.maroon());
+    for(var i = 0; i < 3; i++){
+        let tBranch = new cube(entitiesholder,pivots.BOT)
+        tBranch.transform.setScale(new vector3(1,4,1));
+        tBranch.transform.addRotation(new vector3(0,Math.PI/1.5*i,0));
+        tBranch.transform.addRotation(new vector3(Math.PI/3,0,0));
+        tBranch.transform.setPosition(new vector3(0,2,0));
+        tBranch.setColorRGB(rgbColor.maroon());
+    }
 }

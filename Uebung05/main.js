@@ -17,6 +17,7 @@ addTexture2D(gl,"../assets/wallTexture.png");
 // drawing from the templates.js
 var rCube = rotatingCube();
 var sphere = sphere();
+treeThing();
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();

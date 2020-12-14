@@ -55,47 +55,25 @@ class camera{
         this.updateProjectionMatrix();
     }
 
-    movementListener(canvas,moveSpeed = 0.1,rotationSpeed= 0.1){
-        let cam = this;
-        canvas.setAttribute("tabindex","0");
-        canvas.addEventListener('keypress', function(evt){
-            switch (evt.charCode){
-                case 43:
-                    cam.transform.addPosition(cam.transform.forward().multiply(moveSpeed));
-                    break;
-                case 45:
-                    cam.transform.addPosition(cam.transform.forward().multiply(-moveSpeed));
-                    break;
-            }
-        }, true);
-        canvas.addEventListener('keydown',function(evt){
-            switch (evt.keyCode){
-                case 37:
-                    cam.transform.addPosition(cam.transform.right().multiply(moveSpeed));
-                    break;
-                case 38:
-                    cam.transform.addPosition(cam.transform.up().multiply(-moveSpeed));
-                    break;
-                case 39:
-                    cam.transform.addPosition(cam.transform.right().multiply(-moveSpeed));
-                    break;
-                case 40:
-                    cam.transform.addPosition(cam.transform.up().multiply(moveSpeed));
-                    break;
-                case 65: // A
-                    cam.transform.addRotation(new vector3(0,rotationSpeed,0));
-                    break;
-                case 68: // D
-                    cam.transform.addRotation(new vector3(0,-rotationSpeed,0));
-                    break;
-                case 83: // S
-                    cam.transform.addRotation(new vector3(-rotationSpeed,0,0));
-                    break;
-                case 87: // W
-                    cam.transform.addRotation(new vector3(rotationSpeed,0,0));
-                    break;
-            }
-    
-        }, true);
+    cameraMovement(moveSpeed = 0.1,rotationSpeed= 0.1,deltaTime = 1){
+        let i = input.getInstance();
+        if(i.forwards){
+            this.transform.addPosition(this.transform.forward().multiply(moveSpeed*deltaTime));
+        }
+        if(i.backwards){
+            this.transform.addPosition(this.transform.forward().multiply(-moveSpeed*deltaTime));
+        }
+        if(i.left){
+            this.transform.addPosition(this.transform.right().multiply(moveSpeed*deltaTime));
+        }
+        if(i.right){
+            this.transform.addPosition(this.transform.right().multiply(-moveSpeed*deltaTime));
+        }
+        if(i.up){
+            this.transform.addPosition(this.transform.up().multiply(moveSpeed*deltaTime));
+        }
+        if(i.down){
+            this.transform.addPosition(this.transform.up().multiply(-moveSpeed*deltaTime));
+        }
     }
 }

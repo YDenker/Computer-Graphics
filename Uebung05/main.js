@@ -1,14 +1,17 @@
 var canvas = document.getElementById('canvas');
 var gl = canvas.getContext('webgl');
+var stats = document.getElementById('stats');
 
 if(!gl){
     throw new Error('WebGL not supported');
 }
+canvas.setAttribute("tabindex","0");
+canvas.style.cursor = 'none';
+input.getInstance().addListeners(canvas);
+
 var entities = e.getInstance();
 //creating a camera
 var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
-
-mainCamera.movementListener(canvas,0.1,0.1);
 
 // load and bind texture
 addTexture2D(gl,"../assets/whiteTexture.png");
@@ -81,7 +84,16 @@ function Redraw(){
 }
 
 function Update(){
+    mainCamera.cameraMovement();
     rotateCube();
+    showStats();
+}
+
+function showStats(){
+    let x = -mainCamera.transform.position.matArray[3][0].toFixed(2);
+    let y = -mainCamera.transform.position.matArray[3][1].toFixed(2);
+    let z = -mainCamera.transform.position.matArray[3][2].toFixed(2);
+    stats.innerHTML = "Position ["+x+","+y+","+z+"]";
 }
 
 function rotateCube(){

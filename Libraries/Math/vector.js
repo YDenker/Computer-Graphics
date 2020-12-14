@@ -17,6 +17,10 @@ class vector3{
         return new vector3(this.x*int,this.y*int,this.z*int);
     }
 
+    add(vec3){
+        return new vector3(this.x+vec3.x,this.y+vec3.y,this.z+vec3.z);
+    }
+
     applyMat4(matrix){
         matrix = matrix.matArray;
         let x = matrix[0][0] * this.x + matrix[0][1] * this.y + matrix[0][2] * this.z + matrix[0][3];

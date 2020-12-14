@@ -2,6 +2,8 @@ var canvas = document.getElementById('canvas');
 var gl = canvas.getContext('webgl');
 var stats = document.getElementById('stats');
 
+var showMouse = false;
+
 if(!gl){
     throw new Error('WebGL not supported');
 }
@@ -90,6 +92,10 @@ function Update(){
 }
 
 function showStats(){
+    if(input.getInstance().mouseClick){
+        showMouse = !showMouse;
+        canvas.style.cursor = showMouse? 'crosshair' : 'none';
+    }
     let x = -mainCamera.transform.position.matArray[3][0].toFixed(2);
     let y = -mainCamera.transform.position.matArray[3][1].toFixed(2);
     let z = -mainCamera.transform.position.matArray[3][2].toFixed(2);

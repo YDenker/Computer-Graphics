@@ -55,7 +55,7 @@ class camera{
         this.updateProjectionMatrix();
     }
 
-    cameraMovement(moveSpeed = 0.1,rotationSpeed= 0.1,deltaTime = 1){
+    cameraMovement(moveSpeed = 0.1,rotationSpeed=0.01,deltaTime = 1){
         let i = input.getInstance();
         if(i.forwards){
             this.transform.addPosition(this.transform.forward().multiply(moveSpeed*deltaTime));
@@ -75,5 +75,6 @@ class camera{
         if(i.down){
             this.transform.addPosition(this.transform.up().multiply(-moveSpeed*deltaTime));
         }
+        this.transform.setRotation(new vector3((i.mouseY*rotationSpeed)+4,(i.mouseX*rotationSpeed+4),0));
     }
 }

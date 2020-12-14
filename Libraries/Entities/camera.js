@@ -9,7 +9,7 @@ class camera{
 
     constructor(widthAspect,heighAspect,mainCam = false){
         this.mainCam = mainCam;
-        this.transform = new transformation();
+        this.transform = new camTransformation();
         this.transform.setPosition(new vector3(0,0,-3));
         this.fieldOfView = 70;
         this.aspects = [widthAspect,heighAspect];
@@ -53,5 +53,49 @@ class camera{
         this.clipping[0] = near;
         this.clipping[1] = far;
         this.updateProjectionMatrix();
+    }
+
+    movementListener(canvas,moveSpeed = 0.1,rotationSpeed= 0.1){
+        let cam = this;
+        canvas.setAttribute("tabindex","0");
+        canvas.addEventListener('keypress', function(evt){
+            switch (evt.charCode){
+                case 43:
+                    cam.transform.addPosition(cam.transform.forward().multiply(moveSpeed));
+                    break;
+                case 45:
+                    cam.transform.addPosition(cam.transform.forward().multiply(-moveSpeed));
+                    break;
+            }
+        }, true);
+        canvas.addEventListener('keydown',function(evt){
+            switch (evt.keyCode){
+                case 37:
+                    cam.transform.addPosition(cam.transform.right().multiply(moveSpeed));
+                    break;
+                case 38:
+                    cam.transform.addPosition(cam.transform.up().multiply(-moveSpeed));
+                    break;
+                case 39:
+                    cam.transform.addPosition(cam.transform.right().multiply(-moveSpeed));
+                    break;
+                case 40:
+                    cam.transform.addPosition(cam.transform.up().multiply(moveSpeed));
+                    break;
+                case 65: // A
+                    cam.transform.addRotation(new vector3(0,rotationSpeed,0));
+                    break;
+                case 68: // D
+                    cam.transform.addRotation(new vector3(0,-rotationSpeed,0));
+                    break;
+                case 83: // S
+                    cam.transform.addRotation(new vector3(-rotationSpeed,0,0));
+                    break;
+                case 87: // W
+                    cam.transform.addRotation(new vector3(rotationSpeed,0,0));
+                    break;
+            }
+    
+        }, true);
     }
 }

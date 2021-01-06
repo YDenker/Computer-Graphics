@@ -92,10 +92,14 @@ class Entity{
 
 class entityholder{
     entities;
+    directionalLights;
+    pointLights;
     headindex;
     mainCamera;
     constructor(){
         this.entities = [];
+        this.directionalLights = [];
+        this.pointLights = [];
         this.headindex = 0;
     }
     /** Adds an entity to the entities array and returns its index */
@@ -104,6 +108,11 @@ class entityholder{
         this.entities.push(entity)
         this.headindex += entity.vertexAmount;
         return temp;
+    }
+    /** Adds a directional or point lightsource to the array */
+    addLight(light, directional){
+        if(directional) this.directionalLights.push(light);
+        else this.pointLights.push(light);
     }
     /** returns the vertexdata of every entity in the entities array */
     vertexData(){

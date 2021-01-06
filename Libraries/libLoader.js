@@ -28,6 +28,7 @@ function loadLibraryScripts(){
     scriptLoader('../Libraries/Math/matrix.js');
     scriptLoader('../Libraries/Entities/transformation.js');
     scriptLoader('../Libraries/Entities/camera.js');
+    scriptLoader('../Libraries/Entities/light.js');
     scriptLoader('../Libraries/Entities/entity.js');
     scriptLoader('../Libraries/Entities/shapes.js');
     scriptLoader('../Libraries/Entities/templates.js');

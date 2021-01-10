@@ -50,7 +50,8 @@ function rotatingCube(){ // dynamic
 function sphere(){ // dynamic
     var entitiesholder = e.getInstance();
     var s = new uvsphere(entitiesholder,1,20,20);
-    s.setFaceColorRandom();
+    //s.setFaceColorRandom();
+    s.setColorRGB(rgbColor.grey());
     s.transform.setPosition(new vector3(-.5,0,-3));
     return s;
 }

@@ -119,6 +119,8 @@ class uvsphere extends Entity{
         super();
         var points = [];
         var vertices = [], pi = Math.PI, halfpi = Math.PI / 2;
+        var normals = [];
+        var uvs = [];
         // calculate every vertex once and store it in an 2d array
         for(var i = 0; i < parallels +1; i++){
             var latitude = map(i,0,parallels,-halfpi,halfpi);
@@ -136,35 +138,37 @@ class uvsphere extends Entity{
         for(var i = 0; i < parallels; i++){
             for(var j = 0; j < meridians; j++){
                 var point = points[i][j];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
                 point = points[i][j+1];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
                 point = points[i+1][j];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
                 
                 point = points[i][j+1];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
                 point = points[i+1][j+1];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
                 point = points[i+1][j];
-                vertices.push(point.x);
-                vertices.push(point.y);
-                vertices.push(point.z);
-                
+                this.AddVertex(vertices,normals,uvs,point.x,point.y,point.z);
             }
         }
         
         this.vertices = vertices;
+        this.normals = normals;
+        //this.uvCoords = uvs;
         this.init(entitiesHolder);
+    }
+
+    AddVertex(vertices, normals, uvs ,x,y,z){
+        vertices.push(x);
+        vertices.push(y);
+        vertices.push(z);
+
+        let norm = new vector3(x,y,z).normalize();
+
+        normals.push(norm.x);
+        normals.push(norm.y);
+        normals.push(norm.z);
+        //uvs
     }
 }

@@ -16,12 +16,16 @@ class myVertexShader{
         webGLContext.shaderSource(this.shader,`
         precision mediump float;
         attribute vec3 position;
+        attribute vec3 normal;
         attribute vec3 color;
         attribute vec2 uv;
         varying vec3 vColor;
         varying vec2 vUV;
         uniform mat4 matrix;
+        uniform mat4 normalMatrix;
         void main() {
+            vec3 worldNormal = (normalMatrix * vec4(normal,1.0)).xyz
+
             vColor = color;
             vUV = uv;
             gl_Position = matrix * vec4(position, 1);

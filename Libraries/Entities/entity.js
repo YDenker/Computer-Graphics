@@ -2,6 +2,7 @@ class Entity{
     vertices;
     color;
     uvCoords;
+    normals;
     transform;
     entityIndex;
     vertexAmount;
@@ -19,6 +20,12 @@ class Entity{
                 this.uvCoords.push(0);
             }
         }
+        if(typeof this.normals == 'undefined'){
+            this.normals = [];
+            for(var i = 0; i < this.vertices.length;i++){
+                this.normals.push(1);
+            }
+        }
         this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
         this.textureID = 0;
@@ -33,6 +40,8 @@ class Entity{
         let modelview = camera.transform.get().multiplyMat4(this.transform.get());
         // projection matrix
         let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
+        // normal matrix
+        //let normalMatrix = transpose(inverse(modelview));
 
         webglContext.uniformMatrix4fv(uniformLocations.matrix,false,modelviewProjection.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
@@ -40,6 +49,9 @@ class Entity{
     }
     getVertices(){
         return this.vertices;
+    }
+    getNormals(){
+        return this.normals;
     }
     getColor(){
         return this.color;
@@ -121,6 +133,14 @@ class entityholder{
             vertexData = vertexData.concat(element.getVertices());
         });
         return vertexData;
+    }
+    /** returns the normal for every vertex of every entity in the entities array */
+    normalsData(){
+        var normalsData = [];
+        this.entities.forEach(element => {
+            normalsData = normalsData.concat(element.getNormals());
+        });
+        return normalsData;
     }
     /** returns the colordata of every entity in the entities array */
     colorData(){

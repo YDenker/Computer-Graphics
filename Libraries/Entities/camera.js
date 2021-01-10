@@ -75,6 +75,6 @@ class camera{
         if(i.down){
             this.transform.addPosition(this.transform.up().multiply(-moveSpeed*deltaTime));
         }
-        this.transform.setRotation(new vector3((i.mouseY*rotationSpeed)+4,(i.mouseX*rotationSpeed+4),0));
+        //this.transform.setRotation(new vector3((i.mouseY*rotationSpeed)+4,(i.mouseX*rotationSpeed+4),0));
     }
 }

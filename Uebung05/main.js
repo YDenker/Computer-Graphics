@@ -22,15 +22,17 @@ addTexture2D(gl,"../assets/wallTexture.png");
 // drawing from the templates.js
 var rCube = rotatingCube();
 var sphere = sphere();
-treeThing();
+//treeThing();
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
+var normalsData = entities.normalsData();
 var colorData = entities.colorData();
 var uvData = entities.uvData();
 
 // create Buffer for each data type
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
+var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
 var colorBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(colorData),gl.STATIC_DRAW);
 var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
 
@@ -46,6 +48,7 @@ gl.linkProgram(program);
 
 // create attribute pointers
 createVertexAttributePointer(gl,program,positionBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
+createVertexAttributePointer(gl,program,normalsBuffer,gl.ARRAY_BUFFER,`normal`,gl.FLOAT,3,false,0,0);
 createVertexAttributePointer(gl,program,colorBuffer,gl.ARRAY_BUFFER,`color`,gl.FLOAT,3,false,0,0);
 createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,'uv',gl.FLOAT,2,false,0,0);
 
@@ -55,6 +58,7 @@ debug.log(entities,"Entities");
 
 var uniformLocations = {
     matrix: gl.getUniformLocation(program, `matrix`),
+    normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
 };
 

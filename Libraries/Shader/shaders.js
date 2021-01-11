@@ -21,14 +21,17 @@ class myVertexShader{
         attribute vec2 uv;
         varying vec3 vColor;
         varying vec2 vUV;
-        uniform mat4 matrix;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        uniform mat4 modelViewProjectionMatrix;
+        uniform mat4 modelViewMatrix;
         uniform mat4 normalMatrix;
         void main() {
-            vec3 worldNormal = (normalMatrix * vec4(normal,1.0)).xyz
-
+            vNormal = (normalMatrix * vec4(normal,0.0)).xyz;
+            vPosition = (modelViewMatrix * vec4(position,1.0)).xyz;
             vColor = color;
             vUV = uv;
-            gl_Position = matrix * vec4(position, 1);
+            gl_Position = modelViewProjectionMatrix * vec4(position, 1.0);
         }
         `);
         webGLContext.compileShader(this.shader);
@@ -47,9 +50,31 @@ class myFragmentShader{
         precision mediump float;
         varying vec3 vColor;
         varying vec2 vUV;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
         uniform sampler2D textureID;
         void main() {
-            gl_FragColor = texture2D(textureID,vUV) * vec4(vColor,1);
+            vec3 diffuseColor = vec3(0.0,0.0,1.0);
+            vec3 specularColor = vec3(0.3,0.3,0.3);
+            vec3 lightDirection = vec3(-0.57735,-0.57735,-0.57735);
+
+            vec3 light = normalize(-lightDirection);
+            vec3 view = normalize(-vPosition);
+            vec3 normal = normalize(vNormal);
+
+            vec3 halfVec = normalize(light+view);
+            vec3 ambient = vec3(1.0);
+            vec3 lightColor = vec3(1.0,1.0,0.8);
+
+            float NdotL = max(dot(normal,light),0.0);
+            vec3 diffuse = diffuseColor * NdotL * lightColor;
+
+            float powNdotH = pow(max(dot(normal, halfVec),0.0),128.0);
+            vec3 specular = specularColor * powNdotH * lightColor;
+
+            vec3 color = ambient + diffuse + specular;
+
+            gl_FragColor = texture2D(textureID,vUV) * vec4(vColor,1) * vec4(color, 1.0);
         }
         `);
         webGLContext.compileShader(this.shader);

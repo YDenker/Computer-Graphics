@@ -18,17 +18,26 @@ class matrix4 {
             }
         }
     }
+    /** Invert the 4x4 matrix. */
+    invert(){
+        let out = new matrix4();
+        for(var column = 0; column < 4; column++){
+            for(var row = 0; row < 4; row++){
+                out.matArray[column][row] = -this.matArray[column][row];
+            }
+        }
+        return out;
+    }
     /** Transposes the 4x4 matrix.
-     * 
      */
     transpose(){
         let out = new matrix4();
-        for(column = 0; column < 4; column++){
-            for(row = 0; row < 4; row++){
-                out[column][row] = this.matArray[row][column];
+        for(var column = 0; column < 4; column++){
+            for(var row = 0; row < 4; row++){
+                out.matArray[column][row] = this.matArray[row][column];
             }
         }
-        this.matArray = out;
+        return out;
     }
     /** Returns a clone of the 4x4 matrix.*/
     clone(){

@@ -57,7 +57,8 @@ gl.useProgram(program);
 debug.log(entities,"Entities");
 
 var uniformLocations = {
-    matrix: gl.getUniformLocation(program, `matrix`),
+    modelViewProjectionMatrix: gl.getUniformLocation(program, `modelViewProjectionMatrix`),
+    modelViewMatrix: gl.getUniformLocation(program, `modelViewMatrix`),
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
 };

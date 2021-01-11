@@ -40,10 +40,15 @@ class Entity{
         let modelview = camera.transform.get().multiplyMat4(this.transform.get());
         // projection matrix
         let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
-        // normal matrix
-        //let normalMatrix = transpose(inverse(modelview));
+        // normal matrix (inverse transpose of the modelview matrix???)
+        let normalMatrix = modelview.clone();
+        //normalMatrix.invert();
+        //normalMatrix = normalMatrix.transpose();
 
-        webglContext.uniformMatrix4fv(uniformLocations.matrix,false,modelviewProjection.toFloat32Array());
+
+        webglContext.uniformMatrix4fv(uniformLocations.modelViewProjectionMatrix,false,modelviewProjection.toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.modelViewMatrix,false,modelview.toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.normalMatrix,false,normalMatrix.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }

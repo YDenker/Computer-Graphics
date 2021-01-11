@@ -45,11 +45,8 @@ class Entity{
         //normalMatrix.invert();
         //normalMatrix = normalMatrix.transpose();
 
-        // get the current cameraPosition
-        let x = -mainCamera.transform.position.matArray[3][0];
-        let y = -mainCamera.transform.position.matArray[3][1];
-        let z = -mainCamera.transform.position.matArray[3][2];
-        let cameraPos = [x,y,z];
+        // get the current cameraPosition (it's where the headlight is)
+        let cameraPos = [lights.getLightTransforms()[3],lights.getLightTransforms()[4],lights.getLightTransforms()[5]];
 
         webglContext.uniformMatrix4fv(uniformLocations.modelViewProjectionMatrix,false,modelviewProjection.toFloat32Array());
         webglContext.uniformMatrix4fv(uniformLocations.modelViewMatrix,false,modelview.toFloat32Array());

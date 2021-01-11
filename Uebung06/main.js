@@ -30,13 +30,14 @@ let capsule = objTemplate("../../assets/capsule.obj"); // Capsule
 //adjusting lights
 entities.lights.directional.specularColor = rgbColor.yellow();
 entities.lights.directional.diffuseColor = rgbColor.yellow();
-entities.lights.headlight.intensity = 0.7;
+entities.lights.directional.intensity = 0.7;
 entities.lights.headlight.specularColor = rgbColor.white();
 entities.lights.headlight.diffuseColor = rgbColor.white();
-entities.lights.headlight.intensity = 0.4;
-entities.lights.point.lightPosition = new vector3(1,0,0);
+entities.lights.headlight.intensity = 1.0;
+entities.lights.point.lightPosition = new vector3(0,0,0);
 entities.lights.point.specularColor = rgbColor.red();
 entities.lights.point.diffuseColor = rgbColor.red();
+entities.lights.point.intensity = 0.8;
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
@@ -82,6 +83,7 @@ var uniformLocations = {
     modelViewMatrix: gl.getUniformLocation(program, `modelViewMatrix`),
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
+    camPos: gl.getUniformLocation(program,`camPos`),
     specularColor: gl.getUniformLocation(program,`specularColor`),
     diffuseColor: gl.getUniformLocation(program,`diffuseColor`),
     ambientColor: gl.getUniformLocation(program,`ambientColor`),

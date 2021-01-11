@@ -45,10 +45,17 @@ class Entity{
         //normalMatrix.invert();
         //normalMatrix = normalMatrix.transpose();
 
+        // get the current cameraPosition
+        let x = -mainCamera.transform.position.matArray[3][0];
+        let y = -mainCamera.transform.position.matArray[3][1];
+        let z = -mainCamera.transform.position.matArray[3][2];
+        let cameraPos = [x,y,z];
+
         webglContext.uniformMatrix4fv(uniformLocations.modelViewProjectionMatrix,false,modelviewProjection.toFloat32Array());
         webglContext.uniformMatrix4fv(uniformLocations.modelViewMatrix,false,modelview.toFloat32Array());
         webglContext.uniformMatrix4fv(uniformLocations.normalMatrix,false,normalMatrix.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
+        webglContext.uniform3fv(uniformLocations.camPos,cameraPos);
         webglContext.uniform1fv(uniformLocations.enabled,lights.getEnabled());
         webglContext.uniform1fv(uniformLocations.intensity,lights.getIntensity());
         webglContext.uniform3fv(uniformLocations.diffuseColor,lights.getDiffuseColors());

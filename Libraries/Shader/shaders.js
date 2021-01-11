@@ -49,45 +49,47 @@ class myFragmentShader{
         varying vec3 vNormal;
         varying vec3 vPosition;
         uniform sampler2D textureID;
+        uniform vec3 camPos;
         uniform vec3 diffuseColor[3];
         uniform vec3 specularColor[3];
         uniform vec3 ambientColor[3];
         uniform float enabled[3];
         uniform float intensity[3];
         uniform vec3 lightTransform[3];
-        void main() {
-            vec3 light = normalize(-lightTransform[0]);
+        vec3 CalculateDirectionalLight(vec3 lightDirection, vec3 diffColor, vec3 specColor, vec3 ambColor, float multiplier){
+            vec3 light = normalize(-lightDirection);
             vec3 view = normalize(-vPosition);
             vec3 normal = normalize(vNormal);
-            vec3 head = normalize(lightTransform[2] - vPosition);
-            vec3 direction = normalize(lightTransform[2] - vPosition);
-
             vec3 halfVec = normalize(light+view);
 
             float NdotL = max(dot(normal,light),0.0);
-            vec3 diffuse = texture2D(textureID,vUV).rgb * NdotL * diffuseColor[0];
+            vec3 diffuse = texture2D(textureID,vUV).rgb * NdotL * diffColor;
 
             float powNdotH = pow(max(dot(normal, halfVec),0.0),128.0);
-            vec3 specular = specularColor[0] * powNdotH;
+            vec3 specular = specColor * powNdotH;
 
-            vec3 directional = (ambientColor[0] + diffuse + specular)*intensity[0]*enabled[0];
+            return ((ambColor + diffuse + specular)*multiplier).rgb;
+        }
+        vec3 CalculatePointLight(vec3 lightPosition, vec3 diffColor, vec3 specColor, vec3 ambColor, float multiplier){
+            vec3 light = lightPosition - vPosition;
+            vec3 direction = normalize(light);
+            vec3 normal = normalize(vNormal);
 
-            NdotL = max(dot(normal,head),0.0);
-            diffuse = texture2D(textureID,vUV).rgb * NdotL * diffuseColor[1];
+            float distance = length(light);
+            float attenuation = 1.0/(0.1 + 0.1 * distance + 1.0 * distance * distance);
+            float diffuse = max(dot(normal,light),0.0) * attenuation  * multiplier;
 
-            powNdotH = pow(NdotL,128.0);
-            specular = specularColor[1] * powNdotH;
+            vec3 camDirection = normalize(camPos - vPosition);
+            vec3 lightReflect = reflect(-direction,normal);
+            float specular = 0.5 * pow(max(dot(lightReflect,camDirection),0.0),20.0)* attenuation * multiplier;
 
-            vec3 headlight = (ambientColor[1] + diffuse + specular)*intensity[1]*enabled[1];
-
-            NdotL = max(dot(normal,direction),0.0);
-            diffuse = texture2D(textureID,vUV).rgb * NdotL * diffuseColor[2];
-
-            powNdotH = pow(NdotL,128.0);
-            specular = specularColor[2] * powNdotH;
-
-            vec3 pointlight = (ambientColor[2] + diffuse + specular)*intensity[2]*enabled[2];
-
+            return (texture2D(textureID,vUV).rgb * diffuse * diffColor + specular * specColor+ ambColor*multiplier).rgb;
+        }
+        void main() {
+            vec3 directional = CalculateDirectionalLight(lightTransform[0],diffuseColor[0],specularColor[0],ambientColor[0],enabled[0]*intensity[0]);
+            vec3 headlight = CalculatePointLight(lightTransform[1],diffuseColor[1],specularColor[1],ambientColor[1],(enabled[1]*intensity[1]));
+            vec3 pointlight = CalculatePointLight(lightTransform[2],diffuseColor[2],specularColor[2],ambientColor[2],(enabled[2]*intensity[2]));
+            
             vec4 finalColor = vec4(directional,1.0);
 
             finalColor.rgb += headlight;

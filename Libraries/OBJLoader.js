@@ -7,6 +7,7 @@ async function loadFile(filepath, entitiesHolder){
     file.setUVCoords(data.texcoord);
     file.setNormals(data.normal);
     file.init(entitiesHolder);
+    UpdateBuffers();
 }
 
 function parseOBJ(text) {

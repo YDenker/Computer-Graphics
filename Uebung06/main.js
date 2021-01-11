@@ -46,6 +46,16 @@ var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexD
 var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
 var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
 
+//Update Buffers
+function UpdateBuffers(){
+    vertexData = entities.vertexData();
+    normalsData = entities.normalsData();
+    uvData = entities.uvData();
+    updateBuffer(gl,positionBuffer,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
+    updateBuffer(gl,normalsBuffer,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
+    updateBuffer(gl,uvBuffer,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
+}
+
 // create vertex and fragment shader
 var vertexShader = new myVertexShader(gl);
 var fragmentShader = new myFragmentShader(gl);

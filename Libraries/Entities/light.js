@@ -5,7 +5,7 @@ class lights{ // not all variables will be used in the shader. Maybe i will add 
     constructor(){
         this.directional = new directionalLight();
         this.headlight = new pointLight();
-        this.point = new pointLight(new vector3(1,0,0),rgbColor.red(),rgbColor.red());
+        this.point = new pointLight();
     }
 
     getDiffuseColors(){
@@ -27,7 +27,7 @@ class lights{ // not all variables will be used in the shader. Maybe i will add 
         return [this.directional.intensity,this.headlight.intensity,this.point.intensity];
     }
     getLightTransforms(){
-        return this.directional.lightDirection.toArray().concat([0.0,0.0,0.0]).concat(this.point.lightPosition.toArray());
+        return this.directional.lightDirection.toArray().concat(this.headlight.lightPosition.toArray()).concat(this.point.lightPosition.toArray());
     }
 }
 

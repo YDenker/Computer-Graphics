@@ -70,3 +70,8 @@ function treeThing(){ //static
         tBranch.setColorRGB(rgbColor.maroon());
     }
 }
+
+function teapot(){ //static
+    var entitiesHolder = e.getInstance();
+    loadFile("../../assets/teapot.obj", entitiesHolder);
+}

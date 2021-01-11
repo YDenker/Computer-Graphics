@@ -110,6 +110,12 @@ class Entity{
     setUVCoords(uvCoords){
         this.uvCoords = uvCoords;
     }
+    /** Set the normals for the entity
+     * @param {Float32Array} normals an array of normals for each vertex
+     */
+    setNormals(normals){
+        this.normals = normals;
+    }
 }
 
 class entityholder{

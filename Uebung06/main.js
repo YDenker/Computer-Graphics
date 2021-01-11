@@ -22,7 +22,8 @@ addTexture2D(gl,"../assets/wallTexture.png");
 // drawing from the templates.js
 var rCube = rotatingCube();
 sphere();
-sphere(new vector3(0,0,0));
+sphere(new vector3(2,0,0));
+teapot();
 
 //adjusting lights
 entities.lights.directional.specularColor = rgbColor.yellow();
@@ -31,7 +32,9 @@ entities.lights.headlight.intensity = 0.7;
 entities.lights.headlight.specularColor = rgbColor.white();
 entities.lights.headlight.diffuseColor = rgbColor.white();
 entities.lights.headlight.intensity = 0.4;
-entities.lights.point.lightTransform = new vector3(-5,0,0);
+entities.lights.point.lightPosition = new vector3(1,0,0);
+entities.lights.point.specularColor = rgbColor.red();
+entities.lights.point.diffuseColor = rgbColor.red();
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
@@ -105,6 +108,7 @@ function Redraw(){
 function Update(){
     mainCamera.cameraMovement();
     rotateCube();
+    headlight();
     lightswitch();
     showStats();
 }
@@ -123,6 +127,10 @@ function showStats(){
 function lightswitch(){
     entities.lights.directional.enabled = !input.getInstance().interact;
     entities.lights.point.enabled = !input.getInstance().reload;
+}
+
+function headlight(){
+    entities.lights.headlight.lightPosition = new vector3(-mainCamera.transform.position.matArray[3][0],-mainCamera.transform.position.matArray[3][1],-mainCamera.transform.position.matArray[3][2]);
 }
 
 function rotateCube(){

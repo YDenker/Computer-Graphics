@@ -59,6 +59,7 @@ class myFragmentShader{
             vec3 light = normalize(-lightTransform[0]);
             vec3 view = normalize(-vPosition);
             vec3 normal = normalize(vNormal);
+            vec3 head = normalize(lightTransform[2] - vPosition);
             vec3 direction = normalize(lightTransform[2] - vPosition);
 
             vec3 halfVec = normalize(light+view);
@@ -71,7 +72,7 @@ class myFragmentShader{
 
             vec3 directional = (ambientColor[0] + diffuse + specular)*intensity[0]*enabled[0];
 
-            NdotL = max(dot(normal,view),0.0);
+            NdotL = max(dot(normal,head),0.0);
             diffuse = texture2D(textureID,vUV).rgb * NdotL * diffuseColor[1];
 
             powNdotH = pow(NdotL,128.0);

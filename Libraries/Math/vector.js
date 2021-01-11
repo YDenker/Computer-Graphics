@@ -29,4 +29,8 @@ class vector3{
         //let w = matrix[0][3] * this.x + matrix[1][3] * this.y + matrix[2][3] + matrix[3][3]; => Homogenous coordinate
         return new vector3(x,y,z);
     }
+
+    toArray(){
+        return [this.x,this.y,this.z];
+    }
 }

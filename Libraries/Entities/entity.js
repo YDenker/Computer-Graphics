@@ -35,7 +35,7 @@ class Entity{
     Update(){ /** This is designed after the concept the unity game engine uses. This function is supposed to be overriden.*/        
     }
     /** draws the entity in the given context */
-    draw(webglContext,uniformLocations, camera){
+    draw(webglContext,uniformLocations, camera, lights){
         // viewpoint of camera
         let modelview = camera.transform.get().multiplyMat4(this.transform.get());
         // projection matrix
@@ -45,11 +45,15 @@ class Entity{
         //normalMatrix.invert();
         //normalMatrix = normalMatrix.transpose();
 
-
         webglContext.uniformMatrix4fv(uniformLocations.modelViewProjectionMatrix,false,modelviewProjection.toFloat32Array());
         webglContext.uniformMatrix4fv(uniformLocations.modelViewMatrix,false,modelview.toFloat32Array());
         webglContext.uniformMatrix4fv(uniformLocations.normalMatrix,false,normalMatrix.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
+        webglContext.uniform1fv(uniformLocations.enabled,lights.getEnabled());
+        webglContext.uniform3fv(uniformLocations.ambientColor,lights.getAmbientColors());
+        webglContext.uniform3fv(uniformLocations.diffuseColor,lights.getDiffuseColors());
+        webglContext.uniform3fv(uniformLocations.specularColor,lights.getSpecularColors());
+        webglContext.uniform3fv(uniformLocations.lightDirection,lights.directional.lightDirection.toArray());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){
@@ -109,14 +113,12 @@ class Entity{
 
 class entityholder{
     entities;
-    directionalLights;
-    pointLights;
+    lights;
     headindex;
     mainCamera;
     constructor(){
         this.entities = [];
-        this.directionalLights = [];
-        this.pointLights = [];
+        this.lights = new lights();
         this.headindex = 0;
     }
     /** Adds an entity to the entities array and returns its index */
@@ -125,11 +127,6 @@ class entityholder{
         this.entities.push(entity)
         this.headindex += entity.vertexAmount;
         return temp;
-    }
-    /** Adds a directional or point lightsource to the array */
-    addLight(light, directional){
-        if(directional) this.directionalLights.push(light);
-        else this.pointLights.push(light);
     }
     /** returns the vertexdata of every entity in the entities array */
     vertexData(){
@@ -166,7 +163,7 @@ class entityholder{
     /** Calls the draw function of every entity in the entities array. */
     draw(webglContent,uniformLocations){
         this.entities.forEach(element => {
-            element.draw(webglContent,uniformLocations, this.mainCamera);
+            element.draw(webglContent,uniformLocations, this.mainCamera, this.lights);
         });
     }
 }

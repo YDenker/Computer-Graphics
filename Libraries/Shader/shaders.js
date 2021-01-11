@@ -53,28 +53,30 @@ class myFragmentShader{
         varying vec3 vNormal;
         varying vec3 vPosition;
         uniform sampler2D textureID;
+        uniform vec3 diffuseColor[3];
+        uniform vec3 specularColor[3];
+        uniform vec3 ambientColor[3];
+        uniform float enabled[3];
+        uniform vec3 lightDirection;
         void main() {
-            vec3 diffuseColor = vec3(0.0,0.0,1.0);
-            vec3 specularColor = vec3(0.3,0.3,0.3);
-            vec3 lightDirection = vec3(-0.57735,-0.57735,-0.57735);
-
             vec3 light = normalize(-lightDirection);
             vec3 view = normalize(-vPosition);
             vec3 normal = normalize(vNormal);
 
             vec3 halfVec = normalize(light+view);
-            vec3 ambient = vec3(0.1);
             vec3 lightColor = vec3(1.0,1.0,0.8);
 
             float NdotL = max(dot(normal,light),0.0);
-            vec3 diffuse = diffuseColor * NdotL * lightColor;
+            vec3 diffuse = diffuseColor[0] * NdotL * lightColor;
 
             float powNdotH = pow(max(dot(normal, halfVec),0.0),128.0);
-            vec3 specular = specularColor * powNdotH * lightColor;
+            vec3 specular = specularColor[0] * powNdotH * lightColor;
 
-            vec4 finalColor = vec4(vec3(ambient + diffuse + specular),1.0);
+            vec3 directional = (ambientColor[0] + diffuse + specular)*enabled[0];
 
-            finalColor = texture2D(textureID,vUV) * vec4(vColor,1) * finalColor;
+            vec4 finalColor = vec4(directional,1.0);
+
+            finalColor = finalColor * texture2D(textureID,vUV) * vec4(vColor,1);
 
             gl_FragColor = finalColor;
         }

@@ -61,6 +61,11 @@ var uniformLocations = {
     modelViewMatrix: gl.getUniformLocation(program, `modelViewMatrix`),
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
+    diffuseColor: gl.getUniformLocation(program,`diffuseColor`),
+    specularColor: gl.getUniformLocation(program,`specularColor`),
+    ambientColor: gl.getUniformLocation(program,`ambientColor`),
+    lightDirection: gl.getUniformLocation(program,`lightDirection`),
+    enabled:  gl.getUniformLocation(program,`enabled`),
 };
 
 function initCanvas(){

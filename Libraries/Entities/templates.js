@@ -71,7 +71,7 @@ function treeThing(){ //static
     }
 }
 
-function teapot(){ //static
+function objTemplate(){ //static
     var entitiesHolder = e.getInstance();
-    loadFile("../../assets/teapot.obj", entitiesHolder);
+    loadFile("../../assets/cube.obj", entitiesHolder);
 }

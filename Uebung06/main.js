@@ -23,7 +23,7 @@ addTexture2D(gl,"../assets/wallTexture.png");
 var rCube = rotatingCube();
 sphere();
 sphere(new vector3(2,0,0));
-teapot();
+objTemplate();
 
 //adjusting lights
 entities.lights.directional.specularColor = rgbColor.yellow();

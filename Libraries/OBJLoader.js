@@ -1,25 +1,43 @@
-function loadFile(filepath, entitiesHolder){
-    fetch(filepath).then(response => response.text()).then(text => parseToEntity(text).init(entitiesHolder));
+async function loadFile(filepath, entitiesHolder){
+    var response = await fetch(filepath);
+    var text = await response.text();
+    var data = parseOBJ(text);
+    let file = new Entity();
+    file.setVertices(data.position);
+    file.setUVCoords(data.texcoord);
+    file.setNormals(data.normal);
+    file.init(entitiesHolder);
 }
 
-function parseToEntity(text){
-var out = new Entity();
-let objPositions = [[0, 0, 0]];
-let objTexcoords = [[0, 0]];
-let objNormals = [[0, 0, 0]];
-
-let objVertexData = [
-    objPositions,
-    objTexcoords,
-    objNormals,
-];
-
-let webglVertexData = [
+function parseOBJ(text) {
+    // because indices are base 1 let's just fill in the 0th data
+    const objPositions = [[0, 0, 0]];
+    const objTexcoords = [[0, 0]];
+    const objNormals = [[0, 0, 0]];
+    
+    // same order as `f` indices
+    const objVertexData = [
+        objPositions,
+        objTexcoords,
+        objNormals,
+    ];
+    
+    // same order as `f` indices
+    let webglVertexData = [
         [],   // positions
         [],   // texcoords
         [],   // normals
     ];
-
+    
+    function newGeometry() {
+        // If there is an existing geometry and it's
+        // not empty then start a new one.
+        if (geometry && geometry.data.position.length) {
+        geometry = undefined;
+        }
+        setGeometry();
+    }
+    
     function addVertex(vert) {
         const ptn = vert.split('/');
         ptn.forEach((objIndexStr, i) => {
@@ -31,44 +49,52 @@ let webglVertexData = [
         webglVertexData[i].push(...objVertexData[i][index]);
         });
     }
-    let keywords ={
+    
+    const keywords = {
         v(parts) {
-            objPositions.push(parts.map(parseFloat));
+        objPositions.push(parts.map(parseFloat));
         },
         vn(parts) {
-            objNormals.push(parts.map(parseFloat));
+        objNormals.push(parts.map(parseFloat));
         },
         vt(parts) {
-            objTexcoords.push(parts.map(parseFloat));
+        // should check for missing v and extra w?
+        objTexcoords.push(parts.map(parseFloat));
         },
         f(parts) {
-            const numTriangles = parts.length - 2;
-            for (let tri = 0; tri < numTriangles; ++tri) {
+        const numTriangles = parts.length - 2;
+        for (let tri = 0; tri < numTriangles; ++tri) {
             addVertex(parts[0]);
             addVertex(parts[tri + 1]);
             addVertex(parts[tri + 2]);
-            }
+        }
         },
     };
-
-    let keywordRE = /(\w*)(?: )*(.*)/;
-    let lines = text.split('\n');
-    for(let row = 0; row < lines.length; ++row){
-        let line = lines[row].trim();
-        if(line === '' || line.startsWith('#')) continue;
-        m = keywordRE.exec(line);
-        if(!m) continue;
-        let [, keyword,unparsedArgs] = m;
-        let parts = line.split(/\s+/).slice(1);
-        let handler = keywords[keyword];
-        if(!handler){
-            console.warn('unhandled keyword:', keyword, ' at line ', row +1);
-            continue;
-        }   
-        handler(parts,unparsedArgs);
+    
+    const keywordRE = /(\w*)(?: )*(.*)/;
+    const lines = text.split('\n');
+    for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
+        const line = lines[lineNo].trim();
+        if (line === '' || line.startsWith('#')) {
+        continue;
+        }
+        const m = keywordRE.exec(line);
+        if (!m) {
+        continue;
+        }
+        const [, keyword, unparsedArgs] = m;
+        const parts = line.split(/\s+/).slice(1);
+        const handler = keywords[keyword];
+        if (!handler) {
+        console.warn('unhandled keyword:', keyword);  // eslint-disable-line no-console
+        continue;
+        }
+        handler(parts, unparsedArgs);
     }
-    out.setVertices(webglVertexData[0]);
-    out.setUVCoords(webglVertexData[1]);
-    out.setNormals(webglVertexData[2]);
-    return out;
+    
+    return {
+        position: webglVertexData[0],
+        texcoord: webglVertexData[1],
+        normal: webglVertexData[2],
+    };
 }

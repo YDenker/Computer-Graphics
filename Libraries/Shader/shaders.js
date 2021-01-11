@@ -63,7 +63,7 @@ class myFragmentShader{
             vec3 normal = normalize(vNormal);
 
             vec3 halfVec = normalize(light+view);
-            vec3 ambient = vec3(1.0);
+            vec3 ambient = vec3(0.1);
             vec3 lightColor = vec3(1.0,1.0,0.8);
 
             float NdotL = max(dot(normal,light),0.0);
@@ -72,9 +72,11 @@ class myFragmentShader{
             float powNdotH = pow(max(dot(normal, halfVec),0.0),128.0);
             vec3 specular = specularColor * powNdotH * lightColor;
 
-            vec3 color = ambient + diffuse + specular;
+            vec4 finalColor = vec4(vec3(ambient + diffuse + specular),1.0);
 
-            gl_FragColor = texture2D(textureID,vUV) * vec4(vColor,1) * vec4(color, 1.0);
+            finalColor = texture2D(textureID,vUV) * vec4(vColor,1) * finalColor;
+
+            gl_FragColor = finalColor;
         }
         `);
         webGLContext.compileShader(this.shader);

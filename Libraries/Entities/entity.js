@@ -41,7 +41,7 @@ class Entity{
         // projection matrix
         let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
         // normal matrix (inverse transpose of the modelview matrix???)
-        let normalMatrix = modelview.clone();
+        let normalMatrix = this.transform.get();
         //normalMatrix.invert();
         //normalMatrix = normalMatrix.transpose();
 

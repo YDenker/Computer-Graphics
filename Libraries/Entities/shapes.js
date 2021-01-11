@@ -96,6 +96,13 @@ class cube extends Entity{
             uvs = uvs.concat([0,1,1,1,0,0,1,1,1,0,0,0]);
         }
         this.uvCoords = uvs;
+        let norms = [[0,0,-1],[1,0,0],[0,0,1],[-1,0,0],[0,1,0],[0,-1,0]];
+        this.normals = [];
+        for(var i = 0; i < 6; i++){
+            for(var j = 0; j < 6; j++){
+                this.normals = this.normals.concat(norms[i]);
+            }
+        }
         this.init(entitiesHolder);
     }
 

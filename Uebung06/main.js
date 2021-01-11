@@ -27,13 +27,11 @@ var sphere = sphere();
 // Getting the data from all entities
 var vertexData = entities.vertexData();
 var normalsData = entities.normalsData();
-var colorData = entities.colorData();
 var uvData = entities.uvData();
 
 // create Buffer for each data type
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
 var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
-var colorBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(colorData),gl.STATIC_DRAW);
 var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
 
 // create vertex and fragment shader
@@ -49,7 +47,6 @@ gl.linkProgram(program);
 // create attribute pointers
 createVertexAttributePointer(gl,program,positionBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
 createVertexAttributePointer(gl,program,normalsBuffer,gl.ARRAY_BUFFER,`normal`,gl.FLOAT,3,false,0,0);
-createVertexAttributePointer(gl,program,colorBuffer,gl.ARRAY_BUFFER,`color`,gl.FLOAT,3,false,0,0);
 createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,'uv',gl.FLOAT,2,false,0,0);
 
 // use the reated program inside the webgl context
@@ -61,7 +58,6 @@ var uniformLocations = {
     modelViewMatrix: gl.getUniformLocation(program, `modelViewMatrix`),
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
-    diffuseColor: gl.getUniformLocation(program,`diffuseColor`),
     specularColor: gl.getUniformLocation(program,`specularColor`),
     ambientColor: gl.getUniformLocation(program,`ambientColor`),
     lightDirection: gl.getUniformLocation(program,`lightDirection`),
@@ -98,6 +94,7 @@ function Redraw(){
 function Update(){
     mainCamera.cameraMovement();
     rotateCube();
+    lightswitch();
     showStats();
 }
 
@@ -110,6 +107,11 @@ function showStats(){
     let y = -mainCamera.transform.position.matArray[3][1].toFixed(2);
     let z = -mainCamera.transform.position.matArray[3][2].toFixed(2);
     stats.innerHTML = "Position ["+x+","+y+","+z+"]";
+}
+
+function lightswitch(){
+    entities.lights.directional.enabled = !input.getInstance().interact;
+    entities.lights.point.enabled = !input.getInstance().reload;
 }
 
 function rotateCube(){

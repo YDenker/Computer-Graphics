@@ -51,7 +51,6 @@ class Entity{
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
         webglContext.uniform1fv(uniformLocations.enabled,lights.getEnabled());
         webglContext.uniform3fv(uniformLocations.ambientColor,lights.getAmbientColors());
-        webglContext.uniform3fv(uniformLocations.diffuseColor,lights.getDiffuseColors());
         webglContext.uniform3fv(uniformLocations.specularColor,lights.getSpecularColors());
         webglContext.uniform3fv(uniformLocations.lightDirection,lights.directional.lightDirection.toArray());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);

@@ -8,6 +8,8 @@ class inputManager {
     mouseX;
     mouseY;
     mouseClick;
+    interact;
+    reload;
     constructor(){
         this.forwards = false,this.backwards=false,this.left=false,this.right=false,this.up=false,this.down=false,this.mouseClick = 0, this.mouseX = 0,this.mouseY = 0;
     }
@@ -41,6 +43,13 @@ class inputManager {
                 case 43:
                     i.up = true;
                     break;
+                case 70:
+                    i.interact = true;
+                    break;
+                case 82:
+                    i.reload = true;
+                    break;
+
             }
         },true);
         canvas.addEventListener('keyup',function(evt){
@@ -68,6 +77,12 @@ class inputManager {
                 case 69:
                 case 43:
                     i.up = false;
+                    break;
+                case 70:
+                    i.interact = false;
+                    break;
+                case 82:
+                    i.reload = false;
                     break;
             }
         },true);

@@ -23,7 +23,9 @@ addTexture2D(gl,"../assets/wallTexture.png");
 var rCube = rotatingCube();
 sphere();
 sphere(new vector3(2,0,0));
-objTemplate();
+let cubeobj = objTemplate("../../assets/cube.obj"); // Cube Obj
+cubeobj.then(obj => {debug.log(obj.transform.setPosition(new vector3(0,-3,0)));});
+let capsule = objTemplate("../../assets/capsule.obj"); // Capsule
 
 //adjusting lights
 entities.lights.directional.specularColor = rgbColor.yellow();

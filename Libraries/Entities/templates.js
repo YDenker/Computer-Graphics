@@ -71,7 +71,7 @@ function treeThing(){ //static
     }
 }
 
-function objTemplate(){ //static
+function objTemplate(filepath){ //static
     var entitiesHolder = e.getInstance();
-    loadFile("../../assets/cube.obj", entitiesHolder);
+    return loadFile(filepath, entitiesHolder);
 }

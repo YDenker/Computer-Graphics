@@ -8,6 +8,7 @@ async function loadFile(filepath, entitiesHolder){
     file.setNormals(data.normal);
     file.init(entitiesHolder);
     UpdateBuffers();
+    return file;
 }
 
 function parseOBJ(text) {

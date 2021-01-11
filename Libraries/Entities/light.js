@@ -23,7 +23,14 @@ class lights{ // not all variables will be used in the shader. Maybe i will add 
     getEnabled(){
         return [this.directional.enabled ? 1 : 0,this.headlight.enabled ? 1 : 0,this.point.enabled ? 1 : 0];
     }
+    getIntensity(){
+        return [this.directional.intensity,this.headlight.intensity,this.point.intensity];
+    }
+    getLightTransforms(){
+        return this.directional.lightDirection.toArray().concat([0.0,0.0,0.0]).concat(this.point.lightPosition.toArray());
+    }
 }
+
 
 class directionalLight{
     ambientColor;
@@ -32,6 +39,7 @@ class directionalLight{
     lightColor;
     lightDirection;
     enabled;
+    intensity;
 
     constructor(lightDirection = new vector3(-0.5,-0.5,-0.5),lightColor = new rgbColor(1.0,1.0,0.8),diffuseColor = new rgbColor(0.0,0.0,1.0),ambientColor = new rgbColor(0.1,0.1,0.1),specularColor = new rgbColor(0.3,0.3,0.3)){
         this.ambientColor = ambientColor;
@@ -40,6 +48,7 @@ class directionalLight{
         this.lightColor = lightColor;
         this.lightDirection = lightDirection;
         this.enabled = true;
+        this.intensity = 1.0;
     }
 
     toggle(){
@@ -54,6 +63,7 @@ class pointLight{
     diffuseColor;
     lightColor;
     enabled;
+    intensity
 
     constructor(lightPosition = new vector3(0.0,0.0,0.0), lightColor = new rgbColor(1.0,1.0,0.8),diffuseColor = rgbColor.blue(),ambientColor = new rgbColor(0.1,0.1,0.1), specularColor = new rgbColor(0.3,0.3,0.3)){
         this.ambientColor = ambientColor;
@@ -62,6 +72,7 @@ class pointLight{
         this.lightColor = lightColor;
         this.lightPosition = lightPosition;
         this.enabled =true;
+        this.intensity = 1.0;
     }
 
     toggle(){

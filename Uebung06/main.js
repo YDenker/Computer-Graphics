@@ -21,8 +21,17 @@ addTexture2D(gl,"../assets/wallTexture.png");
 
 // drawing from the templates.js
 var rCube = rotatingCube();
-var sphere = sphere();
-//treeThing();
+sphere();
+sphere(new vector3(0,0,0));
+
+//adjusting lights
+entities.lights.directional.specularColor = rgbColor.yellow();
+entities.lights.directional.diffuseColor = rgbColor.yellow();
+entities.lights.headlight.intensity = 0.7;
+entities.lights.headlight.specularColor = rgbColor.white();
+entities.lights.headlight.diffuseColor = rgbColor.white();
+entities.lights.headlight.intensity = 0.4;
+entities.lights.point.lightTransform = new vector3(-5,0,0);
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
@@ -59,9 +68,11 @@ var uniformLocations = {
     normalMatrix: gl.getUniformLocation(program, `normalMatrix`),
     textureID: gl.getUniformLocation(program,`textureID`),
     specularColor: gl.getUniformLocation(program,`specularColor`),
+    diffuseColor: gl.getUniformLocation(program,`diffuseColor`),
     ambientColor: gl.getUniformLocation(program,`ambientColor`),
-    lightDirection: gl.getUniformLocation(program,`lightDirection`),
+    lightTransform: gl.getUniformLocation(program,`lightTransform`),
     enabled:  gl.getUniformLocation(program,`enabled`),
+    intensity:  gl.getUniformLocation(program,`intensity`),
 };
 
 function initCanvas(){

@@ -50,9 +50,11 @@ class Entity{
         webglContext.uniformMatrix4fv(uniformLocations.normalMatrix,false,normalMatrix.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
         webglContext.uniform1fv(uniformLocations.enabled,lights.getEnabled());
+        webglContext.uniform1fv(uniformLocations.intensity,lights.getIntensity());
+        webglContext.uniform3fv(uniformLocations.diffuseColor,lights.getDiffuseColors());
         webglContext.uniform3fv(uniformLocations.ambientColor,lights.getAmbientColors());
         webglContext.uniform3fv(uniformLocations.specularColor,lights.getSpecularColors());
-        webglContext.uniform3fv(uniformLocations.lightDirection,lights.directional.lightDirection.toArray());
+        webglContext.uniform3fv(uniformLocations.lightTransform,lights.getLightTransforms());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){

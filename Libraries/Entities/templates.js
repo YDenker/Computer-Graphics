@@ -47,12 +47,12 @@ function rotatingCube(){ // dynamic
     return c;
 }
 
-function sphere(){ // dynamic
+function sphere(position = new vector3(-.5,0,-3)){ // dynamic
     var entitiesholder = e.getInstance();
     var s = new uvsphere(entitiesholder,1,20,20);
     //s.setFaceColorRandom();
     s.setColorRGB(rgbColor.grey());
-    s.transform.setPosition(new vector3(-.5,0,-3));
+    s.transform.setPosition(position);
     return s;
 }
 

@@ -18,6 +18,9 @@ class tri extends Entity{
         this.uvCoords = [0.5,1,
                          1,0,
                          0,0,];
+        this.normals = [0,0,1,
+                        0,0,1,
+                        0,0,1]
         this.init(entitiesHolder);
     } 
     setMultiColor(colors){
@@ -46,6 +49,12 @@ class quad extends Entity{
                          1,1,
                          1,0,
                          0,0,];
+        this.normals = [0,0,-1,
+                        0,0,-1,
+                        0,0,-1,
+                        0,0,-1,
+                        0,0,-1,
+                        0,0,-1,]
         this.init(entitiesHolder);
     }
 }

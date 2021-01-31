@@ -33,3 +33,11 @@ function addTexture2D(webglContext,source){
     bindTexture(webglContext,webglContext.TEXTURE_2D,texIndex,texture);
     texIndex += 1;
 }
+
+function createTexture(webglContext,width, height){
+    var texture = webglContext.createTexture();
+    webglContext.bindTexture(webglContext.TEXTURE_2D,texture);
+    webglContext.texImage2D(webglContext.TEXTURE_2D,0,webglContext.RGBA,width,height,0,webglContext.RGBA,webglContext.UNSIGNED_BYTE,null);
+    webglContext.bindTexture(gl.TEXTURE_2D,null);
+    return texture;
+}

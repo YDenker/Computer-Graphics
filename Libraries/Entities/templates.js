@@ -75,3 +75,12 @@ function objTemplate(filepath){ //static
     var entitiesHolder = e.getInstance();
     return loadFile(filepath, entitiesHolder);
 }
+
+function floor(){ //static
+    var entitiesHolder = e.getInstance();
+    var floor = new quad(entitiesHolder);
+    floor.transform.setScale(new vector3(100,100,100));
+    floor.transform.setPosition(new vector3(0,-4,0));
+    floor.transform.setRotation(new vector3(Math.PI / 2,0,0));
+    return floor;
+}

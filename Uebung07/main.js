@@ -26,14 +26,13 @@ sphere(new vector3(2,0,0));
 let cubeobj = objTemplate("../../assets/cube.obj"); // Cube Obj
 cubeobj.then(obj => {debug.log(obj.transform.setPosition(new vector3(0,-3,0)));});
 let capsule = objTemplate("../../assets/capsule.obj"); // Capsule
+let fl = floor();
 
 //adjusting lights
 entities.lights.directional.specularColor = rgbColor.yellow();
 entities.lights.directional.diffuseColor = rgbColor.yellow();
 entities.lights.directional.intensity = 0.7;
-entities.lights.headlight.specularColor = rgbColor.white();
-entities.lights.headlight.diffuseColor = rgbColor.white();
-entities.lights.headlight.intensity = 1.0;
+entities.lights.headlight.enabled = false;
 entities.lights.point.lightPosition = new vector3(0,0,0);
 entities.lights.point.specularColor = rgbColor.red();
 entities.lights.point.diffuseColor = rgbColor.red();
@@ -45,6 +44,7 @@ var normalsData = entities.normalsData();
 var uvData = entities.uvData();
 
 // create Buffer for each data type
+var frameBuffer = createShadowMapBuffers(gl,512,512);
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
 var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
 var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
@@ -122,7 +122,7 @@ function Redraw(){
 function Update(){
     mainCamera.cameraMovement();
     rotateCube();
-    headlight();
+    //headlight();
     lightswitch();
     showStats();
 }

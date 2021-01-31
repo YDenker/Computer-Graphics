@@ -1,7 +1,7 @@
 ReadMe:
 
 Die einzelnen Aufgaben sind wie besprochen in Ordner abgelegt forzufinden.
-In jedem Ordner ist eine eigene index.html und main.js welche die zugehörige Aufgabe zeigt.
+In jedem Ordner ist eine eigene index.html und main.js welche die zugehörige Aufgabe zeigt. (Ich hab versehentlich ab Aufgabe 5 immer den gleichen Ordner benutzt. Um frühere Aufgaben anzugucken sollte sowieso backtracking durch wechseln der Branches benutzt werden!)
 
 One Branch for every Exercise:
 

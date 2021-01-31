@@ -100,6 +100,10 @@ class matrix4 {
     static identity(){
         return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
     }
+    static orthograficProjection(){
+        
+    }
+
     /** Generates a perspective projection matrix with the given bounds.
      * @param {number} fieldOfView Vertical field of view in radians
      * @param {number} aspectRatio Aspect ratio. typically viewport width/height

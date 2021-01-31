@@ -26,10 +26,22 @@ function createNewFrameBufferObject(webglContext, texture, renderBuffer){
     return frameBuffer;
 }
 
+function updateFrameBuffer(webglContext,frameBuffer,width,height,bind){
+    if(bind){
+        webglContext.bindFramebuffer(webglContext.FRAMEBUFFER,frameBuffer);
+        webglContext.viewport(0,0,width,height);
+    }
+    else{
+        webglContext.bindFramebuffer(webglContext.FRAMEBUFFER,null);
+        webglContext.clearColor(0.0,0.0,0.0,1.0);
+        webglContext.clear(webglContext.COLOR_BUFFER_BIT | webglContext.DEPTH_BUFFER_BIT);
+    }
+}
+
 function createNewRenderBufferObject(webglContext,width,height){
     var renderBuffer = webglContext.createRenderbuffer();
     webglContext.bindRenderbuffer(webglContext.RENDERBUFFER,renderBuffer);
     webglContext.renderbufferStorage(webglContext.RENDERBUFFER,webglContext.DEPTH_COMPONENT16,width,height);
-    //webglContext.bindRenderbuffer(webglContext,null); --> Throws a warning ???
+    webglContext.bindRenderbuffer(webglContext.RENDERBUFFER,null);
     return renderBuffer;
 }

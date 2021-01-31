@@ -18,14 +18,16 @@ var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 // load and bind texture
 addTexture2D(gl,"../assets/whiteTexture.png");
 addTexture2D(gl,"../assets/wallTexture.png");
+addTexture2D(gl,"../assets/groundTexture.png");
 
 // drawing from the templates.js
 var rCube = rotatingCube();
-sphere();
-sphere(new vector3(2,0,0));
+//sphere();
+//sphere(new vector3(2,0,0));
 let cubeobj = objTemplate("../../assets/cube.obj"); // Cube Obj
-cubeobj.then(obj => {debug.log(obj.transform.setPosition(new vector3(0,-3,0)));});
+cubeobj.then(obj => {obj.transform.setPosition(new vector3(0,-3,0));});
 let capsule = objTemplate("../../assets/capsule.obj"); // Capsule
+capsule.then(obj => {obj.transform.setRotation(new vector3(Math.PI / 3,0,0))});
 let fl = floor();
 
 //adjusting lights
@@ -96,6 +98,8 @@ function initCanvas(){
     gl.depthFunc(gl.LEQUAL); //Tiefentest einschalten
     gl.enable(gl.DEPTH_TEST);
 
+    gl.enable(gl.CULL_FACE);
+
     gl.clearColor(0.3,0.9,0.3,1.0); //Color Buffer: Farb- und Alphawerte (RGBA)
     gl.clearDepth(1.0); //Depth Buffer: speichert Tiefe z für Pixel
 
@@ -108,8 +112,13 @@ function initCanvas(){
 }
 
 function animationLoop(){
+    //Shadowmaps
+    updateFrameBuffer(gl,frameBuffer,512,512,true);
+    Redraw();
+    updateFrameBuffer(gl,frameBuffer,512,512,false);
     initCanvas();
     Update();
+    UpdateBuffers();
     Redraw();
     requestAnimationFrame(animationLoop);
 }

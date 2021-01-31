@@ -100,8 +100,8 @@ class matrix4 {
     static identity(){
         return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
     }
-    static orthograficProjection(){
-        
+    static orthograficProjection(top,bottom,right,left,far,near){
+        return new matrix4([2/(right-left),0,0,0],[0,2/(top-bottom),0,0],[0,0,-2/(far-near),0],[-(right+left)/(right-left),-(top+bottom)/(top-bottom),-(far+near)/(far-near),1]);
     }
 
     /** Generates a perspective projection matrix with the given bounds.

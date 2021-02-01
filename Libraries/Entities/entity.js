@@ -1,6 +1,7 @@
 class Entity{
     vertices;
     color;
+    alpha;
     uvCoords;
     normals;
     transform;
@@ -26,39 +27,47 @@ class Entity{
                 this.normals.push(1);
             }
         }
+        this.alpha = 1.0;
         this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
-        this.textureID = 0;
+        this.textureID = 1;
         this.entityIndex = entitiesHolder.addEntity(this);
     }
 
     Update(){ /** This is designed after the concept the unity game engine uses. This function is supposed to be overriden.*/        
     }
     /** draws the entity in the given context */
-    draw(webglContext,uniformLocations, camera, lights){
-        // viewpoint of camera
-        let modelview = camera.transform.get().multiplyMat4(this.transform.get());
-        // projection matrix
-        let modelviewProjection = camera.projectionMatrix.multiplyMat4(modelview);
-        // normal matrix (inverse transpose of the modelview matrix???)
-        let normalMatrix = this.transform.get();
-        //normalMatrix.invert();
-        //normalMatrix = normalMatrix.transpose();
+    draw(webglContext,uniformLocations, camera, sunlight){
+
+        let lightProjection = matrix4.orthograficProjection(10.0,-10.0,10.0,-10.0,20.0,1.0);
+        let lightView = sunlight.transform.get();
+
+        let lightDirection = new vector3(0,0,1).applyMat4(sunlight.transform.rotation)
 
         // get the current cameraPosition (it's where the headlight is)
-        let cameraPos = [lights.getLightTransforms()[3],lights.getLightTransforms()[4],lights.getLightTransforms()[5]];
-
-        webglContext.uniformMatrix4fv(uniformLocations.modelViewProjectionMatrix,false,modelviewProjection.toFloat32Array());
-        webglContext.uniformMatrix4fv(uniformLocations.modelViewMatrix,false,modelview.toFloat32Array());
-        webglContext.uniformMatrix4fv(uniformLocations.normalMatrix,false,normalMatrix.toFloat32Array());
+        let cameraPos = camera.getPosition();
+        webglContext.uniformMatrix4fv(uniformLocations.projectionMatrix,false,camera.projectionMatrix.toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.viewMatrix,false,camera.transform.get().toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.modelMatrix,false,this.transform.get().toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.lightProjectionMatrix,false,lightProjection.toFloat32Array());
+        webglContext.uniformMatrix4fv(uniformLocations.lightViewMatrix,false,lightView.toFloat32Array());
         webglContext.uniform1i(uniformLocations.textureID,this.textureID);
-        webglContext.uniform3fv(uniformLocations.camPos,cameraPos);
-        webglContext.uniform1fv(uniformLocations.enabled,lights.getEnabled());
-        webglContext.uniform1fv(uniformLocations.intensity,lights.getIntensity());
-        webglContext.uniform3fv(uniformLocations.diffuseColor,lights.getDiffuseColors());
-        webglContext.uniform3fv(uniformLocations.ambientColor,lights.getAmbientColors());
-        webglContext.uniform3fv(uniformLocations.specularColor,lights.getSpecularColors());
-        webglContext.uniform3fv(uniformLocations.lightTransform,lights.getLightTransforms());
+        webglContext.uniform1i(uniformLocations.shadowMap,0);
+        webglContext.uniform1f(uniformLocations.alpha,this.alpha);
+        webglContext.uniform3fv(uniformLocations.camPos,cameraPos.toArray());
+        webglContext.uniform3fv(uniformLocations.diffuseColor,sunlight.diffuseColor.color);
+        webglContext.uniform3fv(uniformLocations.specularColor,sunlight.specularColor.color);
+        webglContext.uniform3fv(uniformLocations.ambientColor,sunlight.ambientColor.color);
+        webglContext.uniform3fv(uniformLocations.lightDirection,lightDirection.toArray());
+        webglContext.uniform1f(uniformLocations.enabled,sunlight.enabled);
+        webglContext.uniform1f(uniformLocations.intensity,sunlight.intensity);
+        webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
+    }
+    drawDepth(webglContext,uniformLocations,sunlight){
+        let lightProjection = matrix4.orthograficProjection(10.0,-10.0,10.0,-10.0,20.0,0.1);
+        let lightView = sunlight.transform.get().multiplyMat4(this.transform.get());
+        let lightViewProjectionMatrix = lightProjection.multiplyMat4(lightView);
+        webglContext.uniformMatrix4fv(uniformLocations.lightViewProjectionMatrix,false,lightViewProjectionMatrix.toFloat32Array());
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     getVertices(){
@@ -124,12 +133,12 @@ class Entity{
 
 class entityholder{
     entities;
-    lights;
+    sunlight;
     headindex;
     mainCamera;
     constructor(){
         this.entities = [];
-        this.lights = new lights();
+        this.sunlight = new directionalLight();
         this.headindex = 0;
     }
     /** Adds an entity to the entities array and returns its index */
@@ -140,41 +149,54 @@ class entityholder{
         return temp;
     }
     /** returns the vertexdata of every entity in the entities array */
-    vertexData(){
+    vertexData(all = true,opaque = true){
         var vertexData = [];
         this.entities.forEach(element => {
-            vertexData = vertexData.concat(element.getVertices());
+            if(all || (opaque && element.alpha == 1.0) || (!opaque && element.alpha < 1.0 && element.alpha > 0.0))
+                vertexData = vertexData.concat(element.getVertices());
         });
         return vertexData;
     }
     /** returns the normal for every vertex of every entity in the entities array */
-    normalsData(){
+    normalsData(all = true,opaque = true){
         var normalsData = [];
         this.entities.forEach(element => {
-            normalsData = normalsData.concat(element.getNormals());
+            if(all || (opaque && element.alpha == 1.0) || (!opaque && element.alpha < 1.0 && element.alpha > 0.0))
+                normalsData = normalsData.concat(element.getNormals());
         });
         return normalsData;
     }
     /** returns the colordata of every entity in the entities array */
-    colorData(){
+    colorData(all = true,opaque = true){
         var colorData = [];
         this.entities.forEach(element => {
-            colorData = colorData.concat(element.getColor());
+            if(all || (opaque && element.alpha == 1.0) || (!opaque && element.alpha < 1.0 && element.alpha > 0.0))
+                colorData = colorData.concat(element.getColor());
         });
         return colorData;
     }
     /** returns the uvdata of every entity in the entities array */
-    uvData(){
+    uvData(all = true,opaque = true){
         var uvData = [];
         this.entities.forEach(element => {
-            uvData = uvData.concat(element.getUVCoords());
+            if(all || (opaque && element.alpha == 1.0) || (!opaque && element.alpha < 1.0 && element.alpha > 0.0))
+                uvData = uvData.concat(element.getUVCoords());
         })
         return uvData;
     }
     /** Calls the draw function of every entity in the entities array. */
-    draw(webglContent,uniformLocations){
+    draw(webglContent,uniformLocations,all = true,opaque = true){
         this.entities.forEach(element => {
-            element.draw(webglContent,uniformLocations, this.mainCamera, this.lights);
+            if(all || (opaque && element.alpha == 1.0) ||(!opaque && element.alpha < 1.0 && element.alpha > 0.1) ){
+                element.draw(webglContent,uniformLocations, this.mainCamera, this.sunlight);
+            }
+        });
+    }
+    drawShadowMap(webglContent,uniformLocations){
+        this.entities.forEach(element => {
+            if(element.alpha >= 1.0){
+                element.drawDepth(webglContent,uniformLocations,this.sunlight);
+            }
         });
     }
 }

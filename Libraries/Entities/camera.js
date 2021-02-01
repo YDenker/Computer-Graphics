@@ -24,6 +24,12 @@ class camera{
     updateProjectionMatrix(){
         this.projectionMatrix = matrix4.perspectiveProjection(this.fieldOfView,this.aspects[0]/this.aspects[1],this.clipping[0],this.clipping[1]);
     }
+    getPosition(){
+        let x = -this.transform.position.matArray[3][0],
+            y = -this.transform.position.matArray[3][1],
+            z = -this.transform.position.matArray[3][2];
+        return new vector3(x,y,z);
+    }
     /** Sets a new field of view for the camera
      * @param {number} fov field of view in either degree or radian
      * @param {boolean} convertToRadian true if fov was entered as degree value

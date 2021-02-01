@@ -41,7 +41,7 @@ function rotatingCube(){ // dynamic
     var entitiesholder = e.getInstance();
     var c = new cube(entitiesholder);
     c.setSidesColorRGBRandom();
-    c.textureID = 1;
+    c.textureID = 2;
     c.transform.setScale(new vector3(0.5,0.5,0.5));
     c.transform.setPosition(new vector3(1.5,1.5,0));
     return c;
@@ -82,6 +82,25 @@ function floor(){ //static
     floor.transform.setScale(new vector3(100,100,100));
     floor.transform.setPosition(new vector3(0,-4.1,0));
     floor.transform.setRotation(new vector3(Math.PI / 2,0,0));
-    floor.textureID = 2;
+    floor.textureID = 3;
     return floor;
+}
+
+function TranparentCube(){ // static
+    var entitiesHolder = e.getInstance();
+    var c = new cube(entitiesHolder);
+    c.transform.setScale(new vector3(1.5,1.0,0.5));
+    c.transform.setPosition(new vector3(4,-2,0));
+    c.alpha = 0.3;
+    return c;
+}
+
+function ShadowMapQuad(){ // static debug
+    var entitiesHolder = e.getInstance();
+    var quaddy = new quad(entitiesHolder);
+    quaddy.transform.setScale(new vector3(6,6,6));
+    quaddy.transform.setPosition(new vector3(0,3,-5));
+    quaddy.transform.setRotation(new vector3(Math.PI,0,0));
+    quaddy.textureID = 0;
+    quaddy.alpha = 0.98;
 }

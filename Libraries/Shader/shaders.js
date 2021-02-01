@@ -18,16 +18,22 @@ class myVertexShader{
         attribute vec3 position;
         attribute vec3 normal;
         attribute vec2 uv;
+        uniform mat4 projectionMatrix;
+        uniform mat4 viewMatrix;
+        uniform mat4 modelMatrix;
+        uniform mat4 lightProjectionMatrix;
+        uniform mat4 lightViewMatrix;
         varying vec2 vUV;
         varying vec3 vNormal;
         varying vec3 vPosition;
-        uniform mat4 modelViewProjectionMatrix;
-        uniform mat4 modelViewMatrix;
-        uniform mat4 normalMatrix;
+        varying vec4 vPosLightSpace;
         void main() {
-            vNormal = (normalMatrix * vec4(normal,0.0)).xyz;
-            vPosition = (modelViewMatrix * vec4(position,1.0)).xyz;
+            mat4 modelView = viewMatrix * modelMatrix;
+            mat4 modelViewProjectionMatrix = projectionMatrix * modelView;
+            vPosition = (modelView * vec4(position,1.0)).xyz;
+            vNormal = (modelMatrix * vec4(normal,0.0)).xyz;
             vUV = uv;
+            vPosLightSpace = lightProjectionMatrix * lightViewMatrix * vec4(position, 1.0);
             gl_Position = modelViewProjectionMatrix * vec4(position, 1.0);
         }
         `);
@@ -48,14 +54,23 @@ class myFragmentShader{
         varying vec2 vUV;
         varying vec3 vNormal;
         varying vec3 vPosition;
+        varying vec4 vPosLightSpace;
         uniform sampler2D textureID;
+        uniform sampler2D shadowMap;
+        uniform float alpha;
         uniform vec3 camPos;
-        uniform vec3 diffuseColor[3];
-        uniform vec3 specularColor[3];
-        uniform vec3 ambientColor[3];
-        uniform float enabled[3];
-        uniform float intensity[3];
-        uniform vec3 lightTransform[3];
+        uniform vec3 diffuseColor;
+        uniform vec3 specularColor;
+        uniform vec3 ambientColor;
+        uniform vec3 lightDirection;
+        uniform float enabled;
+        uniform float intensity;
+        float calcShadow(){
+            vec3 pos = vPosLightSpace.xyz * 0.5 + 0.5;
+            float depth = texture2D(shadowMap, pos.xy).r;
+            //return depth < pos.z ? 0.0 : 1.0;
+            return 1.0;
+        }
         vec3 CalculateDirectionalLight(vec3 lightDirection, vec3 diffColor, vec3 specColor, vec3 ambColor, float multiplier){
             vec3 light = normalize(-lightDirection);
             vec3 view = normalize(-vPosition);
@@ -68,34 +83,59 @@ class myFragmentShader{
             float powNdotH = pow(max(dot(normal, halfVec),0.0),128.0);
             vec3 specular = specColor * powNdotH;
 
-            return ((ambColor + diffuse + specular)*multiplier).rgb;
-        }
-        vec3 CalculatePointLight(vec3 lightPosition, vec3 diffColor, vec3 specColor, vec3 ambColor, float multiplier){
-            vec3 light = lightPosition - vPosition;
-            vec3 direction = normalize(light);
-            vec3 normal = normalize(vNormal);
+            float shadow = calcShadow();
 
-            float distance = length(light);
-            float attenuation = 1.0/(0.1 + 0.1 * distance + 1.0 * distance * distance);
-            float diffuse = max(dot(normal,light),0.0) * attenuation  * multiplier;
-
-            vec3 camDirection = normalize(camPos - vPosition);
-            vec3 lightReflect = reflect(-direction,normal);
-            float specular = 0.5 * pow(max(dot(lightReflect,camDirection),0.0),20.0)* attenuation * multiplier;
-
-            return (texture2D(textureID,vUV).rgb * diffuse * diffColor + specular * specColor+ ambColor*multiplier).rgb;
+            return ((ambColor + shadow*(diffuse + specular))*multiplier).rgb;
         }
         void main() {
-            vec3 directional = CalculateDirectionalLight(lightTransform[0],diffuseColor[0],specularColor[0],ambientColor[0],enabled[0]*intensity[0]);
-            vec3 headlight = CalculatePointLight(lightTransform[1],diffuseColor[1],specularColor[1],ambientColor[1],(enabled[1]*intensity[1]));
-            vec3 pointlight = CalculatePointLight(lightTransform[2],diffuseColor[2],specularColor[2],ambientColor[2],(enabled[2]*intensity[2]));
+            vec3 directional = CalculateDirectionalLight(lightDirection,diffuseColor,specularColor,ambientColor,enabled*intensity);
             
-            vec4 finalColor = vec4(directional,1.0);
-
-            finalColor.rgb += headlight;
-            finalColor.rgb += pointlight;
+            vec4 finalColor = vec4(directional,alpha);
 
             gl_FragColor = finalColor;
+        }
+        `);
+        webGLContext.compileShader(this.shader);
+    }
+
+    get(){
+        return this.shader;
+    }
+}
+
+class shadowVertexShader{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.VERTEX_SHADER);
+
+        webGLContext.shaderSource(this.shader,`
+        precision mediump float;
+        attribute vec3 position;
+        uniform mat4 lightViewProjectionMatrix;
+        varying vec4 vProjCoord;
+        void main() {
+            vProjCoord = lightViewProjectionMatrix * vec4(position,1.0);
+            gl_Position = vProjCoord;
+        }
+        `);
+        webGLContext.compileShader(this.shader);
+    }
+
+    get(){
+        return this.shader;
+    }
+}
+
+class shadowFragmentShader{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.FRAGMENT_SHADER);
+        webGLContext.shaderSource(this.shader, `
+        precision mediump float;
+        varying vec4 vProjCoord;
+        void main(){
+            vec3 proj = (vProjCoord.xyz/vProjCoord.w + 1.0)/2.0;
+            gl_FragColor = vec4(proj,1.0);
         }
         `);
         webGLContext.compileShader(this.shader);

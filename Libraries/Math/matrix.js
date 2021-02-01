@@ -101,7 +101,10 @@ class matrix4 {
         return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
     }
     static orthograficProjection(top,bottom,right,left,far,near){
-        return new matrix4([2/(right-left),0,0,0],[0,2/(top-bottom),0,0],[0,0,-2/(far-near),0],[-(right+left)/(right-left),-(top+bottom)/(top-bottom),-(far+near)/(far-near),1]);
+        return new matrix4([[2/(right-left),0,0,0],
+                            [0,2/(top-bottom),0,0],
+                            [0,0,-2/(far-near),0],
+                            [-(right+left)/(right-left),-(top+bottom)/(top-bottom),-(far+near)/(far-near),1]]);
     }
 
     /** Generates a perspective projection matrix with the given bounds.
@@ -129,7 +132,7 @@ class matrix4 {
         return new matrix4([[scaleVector.x,0,0,0],[0,scaleVector.y,0,0],[0,0,scaleVector.z,0],[0,0,0,1]]);
     }
     /** Set the translation of the matrix.
-     * @param {Float32Array} transVector A translation vector that is to be applied to the matrix.
+     * @param {vector3} transVector A translation vector that is to be applied to the matrix.
     */
     static translate(transVector){
         var x = transVector.x,
@@ -139,7 +142,7 @@ class matrix4 {
         return new matrix4([[1,0,0,0],[0,1,0,0],[0,0,1,0],[x,y,z,w]]);
     }
     /** Set the rotation of the matrix.
-     * @param {Float32Array} radians A vector of the three angles x,y,z in radian. 
+     * @param {vector3} radians A vector of the three angles x,y,z in radian. 
      */
     static rotate(radians){
         var xrad = radians.x,

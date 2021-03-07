@@ -103,6 +103,48 @@ class myFragmentShader{
     }
 }
 
+class fboSceneVertexShader{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.VERTEX_SHADER);
+
+        webGLContext.shaderSource(this.shader,`
+        precision mediump float;
+        attribute vec3 position;
+        varying vec2 vTextureCoord;
+        void main() {
+            vTextureCoord = (position.xy + 1.0) / 2.0;
+            gl_Position = vec4(position,1.0);
+        }
+        `);
+        webGLContext.compileShader(this.shader);
+    }
+
+    get(){
+        return this.shader;
+    }
+}
+
+class fboSceneFragmentShader{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.FRAGMENT_SHADER);
+        webGLContext.shaderSource(this.shader, `
+        precision mediump float;
+        varying vec2 vTextureCoord;
+        uniform sampler2D texID;
+        void main(){
+            gl_FragColor = texture2D(texID,vTextureCoord);
+        }
+        `);
+        webGLContext.compileShader(this.shader);
+    }
+
+    get(){
+        return this.shader;
+    }
+}
+
 class shadowVertexShader{
     shader;
     constructor(webGLContext){
@@ -141,6 +183,48 @@ class shadowFragmentShader{
         webGLContext.compileShader(this.shader);
     }
 
+    get(){
+        return this.shader;
+    }
+}
+
+class bloomShader{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.FRAGMENT_SHADER);
+        webGLContext.shaderSource(this.shader,`
+        precision mediump float;
+        varying vec2 textureCoords;
+        uniform sampler2D colorTexture;
+        void main(){
+            vec4 color = texture(colorTexture, textureCoords);
+            float brightness = (color.r * 0.2126) + (color.g * 0.7152) + (color.b * 0.0722);
+            gl_FragColor = color * brightness;
+        }
+        `);
+    }
+    get(){
+        return this.shader;
+    }
+}
+
+class combineFragment{
+    shader;
+    constructor(webGLContext){
+        this.shader = webGLContext.createShader(webGLContext.FRAGMENT_SHADER);
+        webGLContext.shaderSource(this.shader,`
+        precision mediump float;
+        varying vec2 textureCoords;
+        varying float bloom;
+        uniform sampler2D colorTexture;
+        uniform sampler2D highlightTexture;
+        void main(){
+            vec4 sceneColor = texture(colorTexture, textureCoords);
+            vec4 highlightColor = texture(highlightTexture, textureCoords);
+            gl_FragColor = sceneColor + highlightColor * bloom;
+        }
+        `);
+    }
     get(){
         return this.shader;
     }

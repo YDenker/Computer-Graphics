@@ -15,6 +15,14 @@ var entities = e.getInstance();
 //creating a camera
 var mainCamera = new camera(canvas.clientWidth,canvas.clientHeight,true);
 
+//create scene texture
+let sceneTexture = createTexture(gl,canvas.clientWidth,canvas.clientHeight);
+let sceneTexID = texIndex-1;
+
+//create bloom texture
+let bloomTexture = createTexture(gl,canvas.clientWidth,canvas.clientHeight);
+let bloomTexID = texIndex-1;
+
 // create shadow map
 let shadowTexture = createTexture(gl,512,512);
 let shadowTexID = texIndex-1;
@@ -38,20 +46,24 @@ capsule.then(obj => {obj.transform.setRotation(new vector3(Math.PI / 3,0,0))});
 let fl = floor();
 
 //adjusting lights
-entities.sunlight.specularColor = rgbColor.yellow();
-entities.sunlight.diffuseColor = rgbColor.yellow();
+entities.sunlight.specularColor = rgbColor.white();
+entities.sunlight.diffuseColor = rgbColor.white();
 entities.sunlight.intensity = 0.7;
 
 // Getting the data from all entities
 var vertexData = entities.vertexData();
 var normalsData = entities.normalsData();
 var uvData = entities.uvData();
+var quadData = entities.quadData();
 
 // create Buffer for each data type
-var frameBuffer = initializeFBO(gl,shadowTexture,512,512);
+var sceneFBO = initializeFBO(gl,sceneTexture,canvas.clientWidth,canvas.clientHeight);
+var shadowFBO = initializeFBO(gl,shadowTexture,canvas.clientWidth,canvas.clientHeight);
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
 var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
 var uvBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(uvData),gl.STATIC_DRAW);
+
+var quadBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(quadData),gl.STATIC_DRAW);
 
 //Update Buffers
 function UpdateBuffers(all = true, opaque = true){
@@ -67,6 +79,9 @@ function UpdateBuffers(all = true, opaque = true){
 var vertexShader = new myVertexShader(gl);
 var fragmentShader = new myFragmentShader(gl);
 
+var sceneVertex = new fboSceneVertexShader(gl);
+var sceneFragment = new fboSceneFragmentShader(gl);
+
 var shadowMapVShader = new shadowVertexShader(gl);
 var shadowMapFShader = new shadowFragmentShader(gl);
 
@@ -74,6 +89,13 @@ var shadowProgram = gl.createProgram();
 attachShader(gl,shadowProgram,shadowMapVShader);
 attachShader(gl,shadowProgram,shadowMapFShader);
 gl.linkProgram(shadowProgram);
+
+var sceneProgram = gl.createProgram();
+attachShader(gl,sceneProgram,sceneVertex);
+attachShader(gl,sceneProgram,sceneFragment);
+gl.linkProgram(sceneProgram);
+
+createVertexAttributePointer(gl,sceneProgram,quadBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
 
 // create the program and attach all shaders
 var program = gl.createProgram();
@@ -84,13 +106,17 @@ gl.linkProgram(program);
 // create attribute pointers
 createVertexAttributePointer(gl,program,positionBuffer,gl.ARRAY_BUFFER,`position`,gl.FLOAT,3,false,0,0);
 createVertexAttributePointer(gl,program,normalsBuffer,gl.ARRAY_BUFFER,`normal`,gl.FLOAT,3,false,0,0);
-createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,'uv',gl.FLOAT,2,false,0,0);
+createVertexAttributePointer(gl,program,uvBuffer,gl.ARRAY_BUFFER,`uv`,gl.FLOAT,2,false,0,0);
+
 
 // use the reated program inside the webgl context
 gl.useProgram(program);
 debug.log(entities,"Entities");
 
 var uniformLocations = {
+    //sceneTexture
+    texID: gl.getUniformLocation(sceneProgram,`texID`),
+	//sceneFBO
     projectionMatrix: gl.getUniformLocation(program, `projectionMatrix`),
     viewMatrix: gl.getUniformLocation(program, `viewMatrix`),
     modelMatrix: gl.getUniformLocation(program, `modelMatrix`),
@@ -143,22 +169,6 @@ function initCanvas(opaque = true){
     gl.depthMask(true);
 }
 
-function updateFrameBuffer(webglContext,frameBuffer,width,height,bind){
-    if(bind){
-        webglContext.disable(webglContext.BLEND);
-        webglContext.enable(webglContext.DEPTH_TEST);
-        webglContext.clearColor(0.1,0.1,0.1,1.0);
-        webglContext.clear(webglContext.COLOR_BUFFER_BIT | webglContext.DEPTH_BUFFER_BIT);
-        webglContext.bindFramebuffer(webglContext.FRAMEBUFFER,frameBuffer);
-        webglContext.viewport(0,0,width,height);
-    }
-    else{
-        webglContext.bindFramebuffer(webglContext.FRAMEBUFFER,null);
-        //webglContext.clearColor(0.0,0.0,0.0,1.0);
-        //webglContext.clear(webglContext.COLOR_BUFFER_BIT | webglContext.DEPTH_BUFFER_BIT);
-    }
-}
-
 function animationLoop(){
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
@@ -167,13 +177,24 @@ function animationLoop(){
     //bindTexture(gl.TEXTURE_2D,shadowTexture);
     if(!lightViewEnabled){
         entities.sunlight.resetTransform();
-        gl.bindFramebuffer(gl.FRAMEBUFFER,frameBuffer);
+        gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);
     }
     
     gl.viewport(0,0,512,512);
     gl.clearColor(0.2,0.2,0.4,1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     entities.drawShadowMap(gl,uniformLocations);
+
+    //Draw to RenderTexture
+    gl.bindFramebuffer(gl.FRAMEBUFFER,sceneFBO);
+    //opaque
+    gl.useProgram(program);
+    initCanvas();
+    UpdateBuffers();
+    Redraw(false);
+    //transparent
+    initCanvas(false);
+    Redraw(false,false);
 
     if(!lightViewEnabled){
         gl.bindFramebuffer(gl.FRAMEBUFFER,null);
@@ -186,6 +207,14 @@ function animationLoop(){
         initCanvas(false);
         Redraw(false,false);
     }
+    
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    gl.useProgram(sceneProgram);
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.CULL_FACE);
+    gl.disable(gl.BLEND);
+    entities.drawCanvas(gl,uniformLocations,0);
+
     Update();
     requestAnimationFrame(animationLoop);
 }

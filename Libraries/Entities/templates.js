@@ -41,7 +41,7 @@ function rotatingCube(){ // dynamic
     var entitiesholder = e.getInstance();
     var c = new cube(entitiesholder);
     c.setSidesColorRGBRandom();
-    c.textureID = 2;
+    c.textureID = 4;
     c.transform.setScale(new vector3(0.5,0.5,0.5));
     c.transform.setPosition(new vector3(1.5,1.5,0));
     return c;
@@ -82,7 +82,7 @@ function floor(){ //static
     floor.transform.setScale(new vector3(100,100,100));
     floor.transform.setPosition(new vector3(0,-4.1,0));
     floor.transform.setRotation(new vector3(Math.PI / 2,0,0));
-    floor.textureID = 3;
+    floor.textureID = 5;
     return floor;
 }
 

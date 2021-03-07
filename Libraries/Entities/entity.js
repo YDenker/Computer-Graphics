@@ -30,7 +30,7 @@ class Entity{
         this.alpha = 1.0;
         this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
-        this.textureID = 1;
+        this.textureID = 3;
         this.entityIndex = entitiesHolder.addEntity(this);
     }
 
@@ -184,6 +184,15 @@ class entityholder{
         })
         return uvData;
     }
+    quadData(){
+        var quadData = [-1,-1,0,
+                        1,-1,0,
+                        1,1,0,
+                        1,1,0,
+                        -1,1,0,
+                        -1,-1,0];
+        return quadData;
+    }
     /** Calls the draw function of every entity in the entities array. */
     draw(webglContent,uniformLocations,all = true,opaque = true){
         this.entities.forEach(element => {
@@ -191,6 +200,10 @@ class entityholder{
                 element.draw(webglContent,uniformLocations, this.mainCamera, this.sunlight);
             }
         });
+    }
+    drawCanvas(webglContext,uniformLocations,sceneTextureID){
+        webglContext.uniform1i(uniformLocations.texID,sceneTextureID);
+        webglContext.drawArrays(webglContext.TRIANGLES,0,6);
     }
     drawShadowMap(webglContent,uniformLocations){
         this.entities.forEach(element => {

@@ -34,13 +34,14 @@ let lightViewEnabled = false;
 addTexture2D(gl,"../assets/whiteTexture.png");
 addTexture2D(gl,"../assets/wallTexture.png");
 addTexture2D(gl,"../assets/groundTexture.png");
+addTexture2D(gl,"../assets/magma.png");
 
 // drawing from the templates.js
 let rCube = rotatingCube();
 TranparentCube();
 //ShadowMapQuad();
 let cubeobj = objTemplate("../../assets/cube.obj"); // Cube Obj
-cubeobj.then(obj => {obj.transform.setPosition(new vector3(0,-3,0));});
+cubeobj.then(obj => {obj.transform.setPosition(new vector3(0,-3,0));obj.textureID=6});
 let capsule = objTemplate("../../assets/capsule.obj"); // Capsule
 capsule.then(obj => {obj.transform.setRotation(new vector3(Math.PI / 3,0,0))});
 let fl = floor();
@@ -271,7 +272,7 @@ function enableLightView(){
     //lightViewEnabled = input.getInstance().reload;
 }
 
-var bloomIntensity = 0.49;
+var bloomIntensity = 0.69;
 function blooooooom(){
     if(input.getInstance().reload){
         entities.setBloom(1.0);

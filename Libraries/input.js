@@ -10,6 +10,8 @@ class inputManager {
     mouseClick;
     interact;
     reload;
+    increment;
+    decrement;
     constructor(){
         this.forwards = false,this.backwards=false,this.left=false,this.right=false,this.up=false,this.down=false,this.mouseClick = 0, this.mouseX = 0,this.mouseY = 0;
     }
@@ -49,6 +51,11 @@ class inputManager {
                 case 82:
                     i.reload = true;
                     break;
+                case 89:
+                    i.decrement = true;
+                    break;
+                case 88:
+                    i.increment = true;
 
             }
         },true);
@@ -84,6 +91,11 @@ class inputManager {
                 case 82:
                     i.reload = false;
                     break;
+                case 89:
+                    i.decrement = false;
+                    break;
+                case 88:
+                    i.increment = false;
             }
         },true);
         canvas.addEventListener('mousemove',function(evt){

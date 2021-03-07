@@ -1,4 +1,5 @@
 class Entity{
+    bloom;
     vertices;
     color;
     alpha;
@@ -28,6 +29,7 @@ class Entity{
             }
         }
         this.alpha = 1.0;
+        this.bloom = 0.55;
         this.transform = new transformation();
         this.vertexAmount = this.vertices.length/3;
         this.textureID = 3;
@@ -61,6 +63,7 @@ class Entity{
         webglContext.uniform3fv(uniformLocations.lightDirection,lightDirection.toArray());
         webglContext.uniform1f(uniformLocations.enabled,sunlight.enabled);
         webglContext.uniform1f(uniformLocations.intensity,sunlight.intensity);
+        webglContext.uniform1f(uniformLocations.bloom,this.bloom);
         webglContext.drawArrays(webglContext.TRIANGLES,this.entityIndex,this.vertexAmount);
     }
     drawDepth(webglContext,uniformLocations,sunlight){
@@ -140,6 +143,11 @@ class entityholder{
         this.entities = [];
         this.sunlight = new directionalLight();
         this.headindex = 0;
+    }
+    setBloom(bloom){
+        this.entities.forEach(element=>{
+            element.bloom = bloom;
+        })
     }
     /** Adds an entity to the entities array and returns its index */
     addEntity(entity){

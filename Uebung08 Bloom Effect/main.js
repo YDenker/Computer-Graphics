@@ -132,6 +132,7 @@ var uniformLocations = {
     lightDirection: gl.getUniformLocation(program,`lightDirection`),
     enabled:  gl.getUniformLocation(program,`enabled`),
     intensity:  gl.getUniformLocation(program,`intensity`),
+    bloom: gl.getUniformLocation(program,`bloom`),
     // ShadowProgram
     lightViewProjectionMatrix: gl.getUniformLocation(shadowProgram,`lightViewProjectionMatrix`),
 };
@@ -207,14 +208,14 @@ function animationLoop(){
         initCanvas(false);
         Redraw(false,false);
     }
-    
+    /*
     gl.bindFramebuffer(gl.FRAMEBUFFER,null);
     gl.useProgram(sceneProgram);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
     gl.disable(gl.BLEND);
     entities.drawCanvas(gl,uniformLocations,0);
-
+    */
     Update();
     requestAnimationFrame(animationLoop);
 }
@@ -231,6 +232,7 @@ function Update(){
     rotateCube();
     lightswitch();
     enableLightView();
+    blooooooom();
     showStats();
 }
 
@@ -242,7 +244,7 @@ function showStats(){
     let x = lightViewEnabled ?entities.sunlight.transform.position.matArray[3][0].toFixed(2):-mainCamera.transform.position.matArray[3][0].toFixed(2);
     let y = lightViewEnabled ?entities.sunlight.transform.position.matArray[3][1].toFixed(2):-mainCamera.transform.position.matArray[3][1].toFixed(2);
     let z = lightViewEnabled ?entities.sunlight.transform.position.matArray[3][2].toFixed(2):-mainCamera.transform.position.matArray[3][2].toFixed(2);
-    stats.innerHTML = "Position ["+x+","+y+","+z+"]";
+    stats.innerHTML = "Position ["+x+","+y+","+z+"]<br/>Bloom Intensity: ["+(1-bloomIntensity).toFixed(2)+"]";
 }
 
 function lightswitch(){
@@ -250,7 +252,20 @@ function lightswitch(){
 }
 
 function enableLightView(){
-    lightViewEnabled = input.getInstance().reload;
+    //lightViewEnabled = input.getInstance().reload;
+}
+
+var bloomIntensity = 0.55;
+function blooooooom(){
+    if(input.getInstance().reload){
+        entities.setBloom(1.0);
+    } else entities.setBloom(bloomIntensity);
+
+    if(input.getInstance().increment)
+        bloomIntensity += 0.01;
+    if(input.getInstance().decrement)
+        bloomIntensity -= 0.01;
+
 }
 
 function rotateCube(){

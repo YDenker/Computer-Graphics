@@ -65,6 +65,7 @@ class myFragmentShader{
         uniform vec3 lightDirection;
         uniform float enabled;
         uniform float intensity;
+        uniform float bloom;
         float calcShadow(){
             vec3 pos = vPosLightSpace.xyz * 0.5 + 0.5;
             float depth = texture2D(shadowMap, pos.xy).r;
@@ -91,7 +92,9 @@ class myFragmentShader{
             vec3 directional = CalculateDirectionalLight(lightDirection,diffuseColor,specularColor,ambientColor,enabled*intensity);
             
             vec4 finalColor = vec4(directional,alpha);
-
+            float brightness = (finalColor.r * 0.2126) + (finalColor.g * 0.7152) + (finalColor.b * 0.0722);
+            if(brightness > bloom)
+            finalColor = vec4(diffuseColor,1.0);
             gl_FragColor = finalColor;
         }
         `);
@@ -188,6 +191,7 @@ class shadowFragmentShader{
     }
 }
 
+// in case i can find my mistake creating FBO's
 class bloomShader{
     shader;
     constructor(webGLContext){

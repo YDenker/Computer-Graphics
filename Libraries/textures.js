@@ -38,7 +38,8 @@ function createTexture(webglContext,width, height){
     var texture = webglContext.createTexture();
     webglContext.bindTexture(webglContext.TEXTURE_2D,texture);
     webglContext.texImage2D(webglContext.TEXTURE_2D,0,webglContext.RGBA,width,height,0,webglContext.RGBA,webglContext.UNSIGNED_BYTE,null);
-    webglContext.texParameteri(webglContext.TEXTURE_2D, webglContext.TEXTURE_MIN_FILTER, webglContext.LINEAR);
+    webglContext.texParameteri(webglContext.TEXTURE_2D, webglContext.TEXTURE_MIN_FILTER, webglContext.NEAREST);
+    webglContext.texParameteri(webglContext.TEXTURE_2D, webglContext.TEXTURE_MAG_FILTER, webglContext.NEAREST);
     webglContext.texParameteri(webglContext.TEXTURE_2D,webglContext.TEXTURE_WRAP_S,webglContext.CLAMP_TO_EDGE);
     webglContext.texParameteri(webglContext.TEXTURE_2D,webglContext.TEXTURE_WRAP_T,webglContext.CLAMP_TO_EDGE);
     webglContext.bindTexture(webglContext.TEXTURE_2D,null);

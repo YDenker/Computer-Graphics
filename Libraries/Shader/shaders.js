@@ -94,7 +94,10 @@ class myFragmentShader{
             vec4 finalColor = vec4(directional,alpha);
             float brightness = (finalColor.r * 0.2126) + (finalColor.g * 0.7152) + (finalColor.b * 0.0722);
             if(brightness > bloom)
-            finalColor = vec4(diffuseColor,1.0);
+                //finalColor = vec4(diffuseColor,1.0) * brightness;
+                finalColor = vec4(1.0);
+            else if(bloom < 1.0)
+                finalColor = vec4(0.0,0.0,0.0,1.0);
             gl_FragColor = finalColor;
         }
         `);
@@ -138,6 +141,8 @@ class fboSceneFragmentShader{
         uniform sampler2D texID;
         void main(){
             gl_FragColor = texture2D(texID,vTextureCoord);
+            
+            gl_FragColor.w = 1.0;
         }
         `);
         webGLContext.compileShader(this.shader);

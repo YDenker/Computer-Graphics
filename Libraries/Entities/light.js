@@ -41,7 +41,7 @@ class directionalLight{
     enabled;
     intensity;
 
-    constructor(lightPosition = new vector3(0.0,0.0,-5.0),lightRotation = new vector3(-Math.PI/180*135,-Math.PI/180*10,0),diffuseColor = new rgbColor(0.0,0.0,1.0),ambientColor = new rgbColor(0.1,0.1,0.1),specularColor = new rgbColor(0.3,0.3,0.3)){
+    constructor(lightPosition = new vector3(0.0,0.0,-5.0),lightRotation = new vector3(-Math.PI/180*135,-Math.PI/180*10,0),diffuseColor = new rgbColor(0.0,0.0,1.0),ambientColor = new rgbColor(0.0,0.0,0.01),specularColor = new rgbColor(0.3,0.3,0.3)){
         this.ambientColor = ambientColor;
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;

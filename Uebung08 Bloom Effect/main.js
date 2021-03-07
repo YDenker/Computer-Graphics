@@ -182,12 +182,13 @@ function animationLoop(){
     }
     
     gl.viewport(0,0,512,512);
-    gl.clearColor(0.2,0.2,0.4,1.0);
+    gl.clearColor(0.4,0.2,0.4,1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     entities.drawShadowMap(gl,uniformLocations);
 
     //Draw to RenderTexture
-    gl.bindFramebuffer(gl.FRAMEBUFFER,sceneFBO);
+    /*
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
     //opaque
     gl.useProgram(program);
     initCanvas();
@@ -196,9 +197,9 @@ function animationLoop(){
     //transparent
     initCanvas(false);
     Redraw(false,false);
-
+    */
     if(!lightViewEnabled){
-        gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER,sceneFBO);
         //opaque
         gl.useProgram(program);
         initCanvas();
@@ -208,14 +209,19 @@ function animationLoop(){
         initCanvas(false);
         Redraw(false,false);
     }
-    /*
+    
     gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
+
     gl.useProgram(sceneProgram);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
     gl.disable(gl.BLEND);
     entities.drawCanvas(gl,uniformLocations,0);
-    */
+
+    gl.bindTexture(gl.TEXTURE_2D,null);
+    
     Update();
     requestAnimationFrame(animationLoop);
 }
@@ -255,7 +261,7 @@ function enableLightView(){
     //lightViewEnabled = input.getInstance().reload;
 }
 
-var bloomIntensity = 0.55;
+var bloomIntensity = 0.48;
 function blooooooom(){
     if(input.getInstance().reload){
         entities.setBloom(1.0);

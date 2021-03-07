@@ -56,6 +56,7 @@ class myFragmentShader{
         varying vec3 vPosition;
         varying vec4 vPosLightSpace;
         uniform sampler2D textureID;
+        uniform sampler2D bloomTexID;
         uniform sampler2D shadowMap;
         uniform float alpha;
         uniform vec3 camPos;
@@ -93,9 +94,9 @@ class myFragmentShader{
             
             vec4 finalColor = vec4(directional,alpha);
             float brightness = (finalColor.r * 0.2126) + (finalColor.g * 0.7152) + (finalColor.b * 0.0722);
+
             if(brightness > bloom)
-                //finalColor = vec4(diffuseColor,1.0) * brightness;
-                finalColor = vec4(1.0);
+                finalColor = vec4(diffuseColor,1.0);
             else if(bloom < 1.0)
                 finalColor = vec4(0.0,0.0,0.0,1.0);
             gl_FragColor = finalColor;
@@ -139,8 +140,22 @@ class fboSceneFragmentShader{
         precision mediump float;
         varying vec2 vTextureCoord;
         uniform sampler2D texID;
+        uniform sampler2D tex1ID;
+        uniform vec2 blur;
         void main(){
-            gl_FragColor = texture2D(texID,vTextureCoord);
+            gl_FragColor = texture2D(tex1ID,vTextureCoord);
+            
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(-blur.x,-blur.y))*0.0625;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(0.0,-blur.y))*0.125;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(blur.x,-blur.y))*0.0625;
+
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(-blur.x,0.0))*0.125;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(0.0,0.0))*0.25;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(blur.x,0.0))*0.125;
+
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(-blur.x,blur.y))*0.0625;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(0.0,blur.y))*0.125;
+            gl_FragColor += texture2D(texID,vTextureCoord + vec2(blur.x,blur.y))*0.0625;
             
             gl_FragColor.w = 1.0;
         }

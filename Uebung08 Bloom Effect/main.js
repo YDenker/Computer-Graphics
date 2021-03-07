@@ -58,6 +58,7 @@ var quadData = entities.quadData();
 
 // create Buffer for each data type
 var sceneFBO = initializeFBO(gl,sceneTexture,canvas.clientWidth,canvas.clientHeight);
+var bloomFBO = initializeFBO(gl,bloomTexture,canvas.clientWidth,canvas.clientHeight);
 var shadowFBO = initializeFBO(gl,shadowTexture,canvas.clientWidth,canvas.clientHeight);
 var positionBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(vertexData),gl.STATIC_DRAW);
 var normalsBuffer = createNewBuffer(gl,gl.ARRAY_BUFFER,new Float32Array(normalsData),gl.STATIC_DRAW);
@@ -116,6 +117,8 @@ debug.log(entities,"Entities");
 var uniformLocations = {
     //sceneTexture
     texID: gl.getUniformLocation(sceneProgram,`texID`),
+    tex1ID: gl.getUniformLocation(sceneProgram,`tex1ID`),
+    blur: gl.getUniformLocation(sceneProgram,`blur`),
 	//sceneFBO
     projectionMatrix: gl.getUniformLocation(program, `projectionMatrix`),
     viewMatrix: gl.getUniformLocation(program, `viewMatrix`),
@@ -186,9 +189,9 @@ function animationLoop(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     entities.drawShadowMap(gl,uniformLocations);
 
-    //Draw to RenderTexture
-    /*
-    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    //Draw to RenderTexture (bloom)!
+    entities.setBloom(1.0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,bloomFBO);
     //opaque
     gl.useProgram(program);
     initCanvas();
@@ -197,8 +200,9 @@ function animationLoop(){
     //transparent
     initCanvas(false);
     Redraw(false,false);
-    */
+
     if(!lightViewEnabled){
+        entities.setBloom(bloomIntensity);
         gl.bindFramebuffer(gl.FRAMEBUFFER,sceneFBO);
         //opaque
         gl.useProgram(program);
@@ -214,12 +218,18 @@ function animationLoop(){
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
 
+    gl.activeTexture(gl.TEXTURE0 + 1);
+    gl.bindTexture(gl.TEXTURE_2D,bloomTexture);
+
     gl.useProgram(sceneProgram);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
     gl.disable(gl.BLEND);
-    entities.drawCanvas(gl,uniformLocations,0);
+    entities.drawCanvas(gl,uniformLocations,0,1);
 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D,null);
+    gl.activeTexture(gl.TEXTURE0 + 1);
     gl.bindTexture(gl.TEXTURE_2D,null);
     
     Update();
@@ -261,7 +271,7 @@ function enableLightView(){
     //lightViewEnabled = input.getInstance().reload;
 }
 
-var bloomIntensity = 0.48;
+var bloomIntensity = 0.49;
 function blooooooom(){
     if(input.getInstance().reload){
         entities.setBloom(1.0);

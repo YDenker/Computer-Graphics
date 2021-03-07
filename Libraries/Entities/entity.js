@@ -209,8 +209,12 @@ class entityholder{
             }
         });
     }
-    drawCanvas(webglContext,uniformLocations,sceneTextureID){
+    drawCanvas(webglContext,uniformLocations,sceneTextureID,bloomTextureID){
+        let blur = 5.0;
+
+        webglContext.uniform2fv(uniformLocations.blur,[blur/512,blur/512]);
         webglContext.uniform1i(uniformLocations.texID,sceneTextureID);
+        webglContext.uniform1i(uniformLocations.tex1ID,bloomTextureID);
         webglContext.drawArrays(webglContext.TRIANGLES,0,6);
     }
     drawShadowMap(webglContent,uniformLocations){
